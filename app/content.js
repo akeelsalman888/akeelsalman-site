@@ -32,18 +32,22 @@ export const services = [
 
 export const projects = [
   {
-    name: "Iman Islam",
+    name: "Iman Islamic Center (IIC)",
     url: "https://www.iman-islam.org",
-    // TODO: describe what it is, your role, and the tech used.
-    description: "A community platform. (Add a short description of what it does and your role.)",
-    tech: [], // e.g. ["Next.js", "Node", "PostgreSQL"]
+    description:
+      "Bilingual (English/Arabic, full RTL) public website for an Islamic community center — prayer times, events, donations, and service applications. Solo-built React/Vite site with a serverless Google Apps Script backend and an automated Playwright suite that regression-tests every route across viewports and languages before it ships.",
+    tech: ["React", "Vite", "Google Apps Script", "Playwright", "i18n/RTL"],
   },
   {
-    name: "Connect — Iman Islam",
+    name: "Iman Connect",
     url: "https://connect.iman-islam.org",
-    // TODO: describe what it is, your role, and the tech used.
-    description: "A connected service for the Iman Islam community. (Add a short description.)",
-    tech: [],
+    description:
+      "Internal operations portal for the same center — purchase approvals, reimbursements, volunteer scheduling, and donation reporting, gated behind Google Workspace SSO. Solo-built end to end (React frontend, Google Apps Script backends, CI-enforced responsive/visual regression gate) to replace manual paper/email workflows for the board and staff.",
+    tech: ["React", "Google Apps Script", "Google SSO", "CI Visual Regression"],
+    // Private, SSO-gated internal portal — not publicly reachable.
+    // When screenshots exist, add caseStudyUrl (e.g. "/work/iman-connect")
+    // and the card will link to the case study instead.
+    private: true,
   },
 ];
 

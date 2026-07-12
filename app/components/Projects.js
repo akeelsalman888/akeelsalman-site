@@ -1,52 +1,62 @@
 import Section from "./Section";
 import { projects } from "../content";
 
-function CardInner({ p, badge, footer }) {
+function RowInner({ p, index, badge, footer }) {
   return (
-    <>
-      <div className="flex items-center justify-between">
-        <h3 className="font-medium">{p.name}</h3>
-        {badge}
+    <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-[3rem_1fr]">
+      <span className="font-display text-2xl italic text-faint transition-colors group-hover:text-accent">
+        {String(index + 1).padStart(2, "0")}
+      </span>
+      <div>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="font-display text-2xl font-medium tracking-tight transition-colors group-hover:text-accent">
+            {p.name}
+          </h3>
+          {badge}
+        </div>
+        <p className="mt-3 max-w-2xl leading-relaxed text-muted">
+          {p.description}
+        </p>
+        {p.tech.length > 0 && (
+          <ul className="mt-5 flex flex-wrap gap-2">
+            {p.tech.map((t) => (
+              <li
+                key={t}
+                className="eyebrow rounded-full border px-3 py-1 text-[0.65rem] text-muted"
+              >
+                {t}
+              </li>
+            ))}
+          </ul>
+        )}
+        <span className="mt-5 block text-sm text-faint">{footer}</span>
       </div>
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">
-        {p.description}
-      </p>
-      {p.tech.length > 0 && (
-        <ul className="mt-4 flex flex-wrap gap-2">
-          {p.tech.map((t) => (
-            <li
-              key={t}
-              className="rounded-full border px-2.5 py-0.5 text-xs text-muted"
-            >
-              {t}
-            </li>
-          ))}
-        </ul>
-      )}
-      <span className="mt-4 text-xs text-muted">{footer}</span>
-    </>
+    </div>
   );
 }
 
 export default function Projects() {
-  return (
-    <Section id="projects" title="Selected work">
-      <div className="grid gap-6 sm:grid-cols-2">
-        {projects.map((p) => {
-          const cardBase = "flex flex-col rounded-xl border bg-surface p-6";
+  const rowBase =
+    "group block border-t py-10 first:border-t-0 first:pt-0 transition-colors";
 
+  return (
+    <Section
+      id="projects"
+      index="03"
+      kicker="Selected work"
+      title="A few things I've built"
+    >
+      <div className="flex flex-col">
+        {projects.map((p, i) => {
           // Case-study link (internal) — takes precedence once assets exist.
           if (p.caseStudyUrl) {
             return (
-              <a
-                key={p.name}
-                href={p.caseStudyUrl}
-                className={`group ${cardBase} transition-colors hover:border-accent`}
-              >
-                <CardInner
+              <a key={p.name} href={p.caseStudyUrl} className={rowBase}>
+                <RowInner
                   p={p}
+                  index={i}
                   badge={
-                    <span className="text-xs text-muted transition-transform group-hover:translate-x-0.5">
+                    <span className="eyebrow text-muted transition-transform group-hover:translate-x-1">
                       Case study →
                     </span>
                   }
@@ -59,12 +69,13 @@ export default function Projects() {
           // Private, SSO-gated portal — not clickable, no dead login-wall link.
           if (p.private) {
             return (
-              <div key={p.name} className={cardBase}>
-                <CardInner
+              <div key={p.name} className={rowBase}>
+                <RowInner
                   p={p}
+                  index={i}
                   badge={
-                    <span className="rounded-full border px-2.5 py-0.5 text-xs text-muted">
-                      🔒 Internal
+                    <span className="eyebrow rounded-full border px-3 py-1 text-[0.65rem] text-muted">
+                      Internal
                     </span>
                   }
                   footer="Private internal portal — walkthrough available on request"
@@ -80,12 +91,13 @@ export default function Projects() {
               href={p.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group ${cardBase} transition-colors hover:border-accent`}
+              className={rowBase}
             >
-              <CardInner
+              <RowInner
                 p={p}
+                index={i}
                 badge={
-                  <span className="text-muted transition-transform group-hover:translate-x-0.5">
+                  <span className="text-lg text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent">
                     ↗
                   </span>
                 }

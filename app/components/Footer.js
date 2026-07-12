@@ -5,12 +5,17 @@ export default function Footer() {
 
   return (
     <footer className="border-t">
-      <div className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-4 px-6 py-10 text-sm text-muted sm:flex-row">
-        <p>
-          © {"2026"} {site.name}
-        </p>
-        <div className="flex gap-6">
-          <a href={`mailto:${site.email}`} className="hover:text-foreground">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-12 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <a href="#top" className="font-display text-xl font-semibold tracking-tight">
+            {site.name}
+          </a>
+          <p className="mt-2 text-sm text-faint">
+            © 2026 · Built and designed by hand.
+          </p>
+        </div>
+        <div className="flex gap-6 text-sm">
+          <a href={`mailto:${site.email}`} className="text-muted hover:text-foreground">
             Email
           </a>
           {socials.map(([name, url]) => (
@@ -19,7 +24,7 @@ export default function Footer() {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="capitalize hover:text-foreground"
+              className="capitalize text-muted hover:text-foreground"
             >
               {name}
             </a>

@@ -1,28 +1,52 @@
 import { site } from "../content";
 
 export default function Hero() {
+  // Split the tagline on the em dash so the trailing clause can be set
+  // in italic accent — an editorial emphasis device.
+  const [lead, aside] = site.tagline.split("—").map((s) => s.trim());
+
   return (
-    <section id="top" className="mx-auto w-full max-w-4xl px-6 py-24 sm:py-32">
-      <p className="mb-4 text-sm font-medium text-accent">{site.title}</p>
-      <h1 className="max-w-2xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-        {site.tagline}
+    <section
+      id="top"
+      className="relative mx-auto w-full max-w-5xl px-6 pb-20 pt-20 sm:pb-28 sm:pt-28"
+    >
+      <p className="eyebrow rise text-accent">{site.title}</p>
+
+      <h1 className="rise mt-6 max-w-4xl font-display text-[2.7rem] font-medium leading-[1.05] tracking-tight sm:text-6xl md:text-7xl">
+        {lead}
+        {aside && (
+          <>
+            {" "}
+            <span className="italic text-muted">— {aside}</span>
+          </>
+        )}
       </h1>
-      <p className="mt-6 max-w-xl text-lg text-muted">
-        Hi, I'm {site.name} — a full-stack developer available for freelance work.
-      </p>
-      <p className="mt-2 text-sm text-muted">{site.location}</p>
-      <div className="mt-8 flex flex-wrap gap-3">
+
+      <div className="rise mt-10 flex max-w-2xl flex-col gap-6 border-l-2 border-accent pl-5 sm:mt-12">
+        <p className="text-lg leading-relaxed text-muted">
+          Hi, I&apos;m <span className="text-foreground">{site.name}</span> — I
+          build fast, reliable web apps and the automation behind them. I&apos;ve
+          shipped two production systems for a community organization, solo — and
+          I&apos;m open to freelance work.
+        </p>
+        <p className="eyebrow text-faint">{site.location}</p>
+      </div>
+
+      <div className="rise mt-10 flex flex-wrap items-center gap-6">
         <a
           href="#contact"
-          className="rounded-full bg-accent px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
+          className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-ink transition-transform hover:-translate-y-0.5"
         >
-          Get in touch
+          Start a project
+          <span aria-hidden>→</span>
         </a>
         <a
           href="#projects"
-          className="rounded-full border px-6 py-3 text-sm font-medium transition-colors hover:bg-surface"
+          className="group inline-flex items-center gap-2 text-sm font-medium"
         >
-          View my work
+          <span className="border-b border-transparent transition-colors group-hover:border-foreground">
+            See selected work
+          </span>
         </a>
       </div>
     </section>

@@ -10,10 +10,7 @@ export const site = {
   email: "akeelsalman888@gmail.com",
   socials: {
     github: "https://github.com/akeelsalman888",
-    // TODO: replace with your real LinkedIn URL once the account exists
-    // (e.g. "https://www.linkedin.com/in/akeel-salman"). Leave as-is and it
-    // simply won't render in the footer until you fill it in.
-    linkedin: "",
+    linkedin: "https://www.linkedin.com/in/akeelsalman",
   },
 };
 
@@ -93,7 +90,7 @@ export const testimonials = [
   {
     // Paste the real quote here once your coworkers help you draft it, fill in
     // name/role, then DELETE the `draft: true` line to make the section visible.
-    // (Here's the sample wording you previewed, to reuse as a starting point:
+    // (Sample wording to reuse as a starting point:
     //  "Akeel built our community website and internal operations portal from
     //   the ground up. The site made it easy for our community to find prayer
     //   times, events, and donate online, and the portal replaced the manual

@@ -1,5 +1,7 @@
 import { site } from "../content";
 
+const LABELS = { github: "GitHub", linkedin: "LinkedIn" };
+
 export default function Footer() {
   const socials = Object.entries(site.socials).filter(([, url]) => url);
 
@@ -24,9 +26,9 @@ export default function Footer() {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="capitalize text-muted hover:text-foreground"
+              className="text-muted hover:text-foreground"
             >
-              {name}
+              {LABELS[name] ?? name}
             </a>
           ))}
         </div>

@@ -7,23 +7,23 @@ export default function Testimonials() {
 
   return (
     <section id="testimonials" className="border-t bg-surface">
-      <div className="mx-auto w-full max-w-5xl px-6 py-20 sm:py-28">
+      <div className="mx-auto w-full max-w-6xl px-6 py-20 sm:py-28">
         <p className="eyebrow text-accent">Kind words</p>
-        <div className="mt-12 flex flex-col gap-16">
+        <div className="mt-12 grid gap-10 sm:mt-14 md:grid-cols-3">
           {live.map((t, i) => (
-            <figure key={i} className="relative max-w-3xl">
+            <figure key={i} className="relative flex flex-col">
               <span
                 aria-hidden
-                className="absolute -left-1 -top-9 select-none font-display text-8xl leading-none text-accent opacity-20 sm:-left-6"
+                className="select-none font-display text-6xl leading-none text-accent opacity-20"
               >
                 &ldquo;
               </span>
-              <blockquote className="relative font-display text-2xl font-medium leading-snug tracking-tight sm:text-[1.9rem]">
+              <blockquote className="relative -mt-4 flex-1 font-display text-lg font-medium leading-snug tracking-tight">
                 {t.quote}
               </blockquote>
-              <figcaption className="mt-6 flex flex-wrap items-baseline gap-x-2 text-sm">
+              <figcaption className="mt-6 flex flex-col gap-0.5 text-sm">
                 <span className="font-medium">{t.name}</span>
-                {t.role && <span className="text-muted">· {t.role}</span>}
+                {t.role && <span className="text-muted">{t.role}</span>}
               </figcaption>
             </figure>
           ))}

@@ -83,22 +83,25 @@ export const about = {
 };
 
 // Testimonials.
-// Each entry with `draft: true` is HIDDEN on the live site. When you receive a
-// real quote, paste it in, fill name/role, and delete the `draft: true` line —
-// the section then appears automatically. Add more entries any time.
+// Each entry with `draft: true` is HIDDEN on the live site. To hide one, add a
+// `draft: true` line; to publish it, remove that line. Add more entries any time.
 export const testimonials = [
   {
-    // Paste the real quote here once your coworkers help you draft it, fill in
-    // name/role, then DELETE the `draft: true` line to make the section visible.
-    // (Sample wording to reuse as a starting point:
-    //  "Akeel built our community website and internal operations portal from
-    //   the ground up. The site made it easy for our community to find prayer
-    //   times, events, and donate online, and the portal replaced the manual
-    //   paperwork our board used to rely on. Reliable, easy to work with, and
-    //   delivered everything himself.")
-    quote: "",
-    name: "",
-    role: "Board Member, Iman Islamic Center",
-    draft: true,
+    quote:
+      "Akeel gave our center a real home online. Families can now find prayer times, follow our events, and give their donations in just a few taps, and our team has finally left the old paperwork behind. He carried the whole project himself, with care and integrity, and we are grateful for what he built for our community.",
+    name: "Abdulaziz Al-Abbasi",
+    role: "Imam & President, Iman Islamic Center",
+  },
+  {
+    quote:
+      "Akeel built our website and internal portal from the ground up, and the impact has been huge. Work we used to do by hand now lives online — our community can find prayer times, follow events, and donate in a few clicks, while the portal streamlines everything behind the scenes. He was reliable, easy to work with, and delivered a complete, polished solution entirely on his own.",
+    name: "Hamza Sindi",
+    role: "Executive Leadership Committee, Iman Islamic Center",
+  },
+  {
+    quote:
+      "Working with Akeel was effortless. He rebuilt everything from scratch — the public website and the internal portal our board runs on — and turned processes we used to handle on paper into something fast and organized. He understood what we needed before we asked, and delivered all of it himself.",
+    name: "Mohammad Alshammari",
+    role: "Executive Leadership Committee, Iman Islamic Center",
   },
 ];

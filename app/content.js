@@ -88,20 +88,23 @@ export const about = {
 export const testimonials = [
   {
     quote:
-      "Akeel gave our center a real home online. Families can now find prayer times, follow our events, and give their donations in just a few taps, and our team has finally left the old paperwork behind. He carried the whole project himself, with care and integrity, and we are grateful for what he built for our community.",
+      "We handed Akeel the whole vision for bringing our center online, and he brought it to life. He built us a complete website in both English and Arabic where families can give, ask the imam a question, request a fatwa, and register and pay online for the adult classes I teach. He carried the entire project himself, with patience and integrity, and gave our center a home online that truly reflects who we are.",
     name: "Abdulaziz Al-Abbasi",
-    role: "Imam & President, Iman Islamic Center",
+    role: "Imam & President",
+    org: "Iman Islamic Center · Lincoln, NE",
   },
   {
     quote:
-      "Akeel built our website and internal portal from the ground up, and the impact has been huge. Work we used to do by hand now lives online — our community can find prayer times, follow events, and donate in a few clicks, while the portal streamlines everything behind the scenes. He was reliable, easy to work with, and delivered a complete, polished solution entirely on his own.",
+      "Behind the scenes, Akeel transformed how our board actually runs. The stacks of paperwork and manual tracking we used to rely on are gone — he moved all of it into a single internal portal that keeps our operations organized and saves us hours every week. He was reliable and easy to work with from start to finish, and delivered the whole system, website and portal alike, entirely on his own.",
     name: "Hamza Sindi",
-    role: "Executive Leadership Committee, Iman Islamic Center",
+    role: "Executive Leadership Committee",
+    org: "Iman Islamic Center · Lincoln, NE",
   },
   {
     quote:
-      "Working with Akeel was effortless. He rebuilt everything from scratch — the public website and the internal portal our board runs on — and turned processes we used to handle on paper into something fast and organized. He understood what we needed before we asked, and delivered all of it himself.",
+      "Akeel gave our community a real way to connect with the center. Members can volunteer, book a visit, and stay on top of every announcement, and the site tells our story — our mission, our journey, and where we're headed — to both our English- and Arabic-speaking families. He understood what our community needed before we asked, and delivered every piece of it himself.",
     name: "Mohammad Alshammari",
-    role: "Executive Leadership Committee, Iman Islamic Center",
+    role: "Executive Leadership Committee",
+    org: "Iman Islamic Center · Lincoln, NE",
   },
 ];

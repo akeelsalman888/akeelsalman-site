@@ -21,9 +21,10 @@ export default function Testimonials() {
               <blockquote className="relative -mt-4 flex-1 font-display text-lg font-medium leading-snug tracking-tight">
                 {t.quote}
               </blockquote>
-              <figcaption className="mt-6 flex flex-col gap-0.5 text-sm">
-                <span className="font-medium">{t.name}</span>
-                {t.role && <span className="text-muted">{t.role}</span>}
+              <figcaption className="mt-6 flex flex-col gap-0.5">
+                <span className="text-sm font-medium">{t.name}</span>
+                {t.role && <span className="text-xs text-muted">{t.role}</span>}
+                {t.org && <span className="text-xs text-muted">{t.org}</span>}
               </figcaption>
             </figure>
           ))}

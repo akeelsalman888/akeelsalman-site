@@ -10,10 +10,10 @@
   --background: #faf7f1;
   --foreground: #211d18;
   --muted: #6f665a;
-  --faint: #9a9084;
   --border: #e7dfd2;
   --accent: #bd4f2c;
   --accent-ink: #ffffff;
+  --faint: #7a7062; /* darkened from #9a9084 to meet WCAG AA (~4.5:1) */
   --surface: #f3ecdf;
   --surface-2: #efe6d6;
 }
@@ -38,7 +38,7 @@
     --background: #16130e;
     --foreground: #f3ecdf;
     --muted: #a79d8c;
-    --faint: #766c5c;
+    --faint: #857b6a; /* lightened from #766c5c to meet WCAG AA (~4.5:1) */
     --border: #2e281f;
     --accent: #e07d52;
     --accent-ink: #1a1005;
@@ -60,6 +60,13 @@ body {
   color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Visible keyboard focus ring — shows only for keyboard users, matches accent. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 
 /* Subtle paper grain — gives the surface an analog, human feel. */

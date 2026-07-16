@@ -28,8 +28,14 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }}
       />
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-5 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-ink"
+      >
+        Skip to content
+      </a>
       <Nav />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <Hero />
         <Services />
         <Skills />

@@ -23,12 +23,26 @@ export const metadata = {
   metadataBase: new URL("https://akeelsalman.com"),
   title: `${site.name} — ${site.title}`,
   description: site.tagline,
+  keywords: [
+    "Akeel Salman",
+    "Full-Stack Web Developer",
+    "React developer",
+    "Next.js developer",
+    "internal tools",
+    "web automation",
+  ],
+  alternates: { canonical: "/" },
   openGraph: {
     title: `${site.name} — ${site.title}`,
     description: site.tagline,
     url: "https://akeelsalman.com",
     siteName: site.name,
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${site.name} — ${site.title}`,
+    description: site.tagline,
   },
 };
 

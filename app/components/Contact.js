@@ -1,4 +1,5 @@
 import { site } from "../content";
+import ContactForm from "./ContactForm";
 
 export default function Contact() {
   return (
@@ -10,24 +11,21 @@ export default function Contact() {
           <span className="italic markline">worth shipping.</span>
         </h2>
         <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
-          Have a project in mind, or an existing site that needs a hand? Send me
-          a note — I read every message and reply personally.
+          Have a project in mind, or an existing site that needs a hand? Tell me
+          a bit about it below — I read every message and reply personally.
         </p>
 
-        <a
-          href={`mailto:${site.email}`}
-          className="group mt-10 inline-flex flex-wrap items-baseline gap-x-4 gap-y-1"
-        >
-          <span className="font-display text-2xl font-medium tracking-tight underline decoration-accent decoration-2 underline-offset-[6px] transition-colors group-hover:text-accent sm:text-3xl">
-            {site.email}
-          </span>
-          <span
-            aria-hidden
-            className="text-xl text-accent transition-transform group-hover:translate-x-1"
+        <ContactForm />
+
+        <p className="mt-10 text-sm text-muted">
+          Prefer email? Reach me directly at{" "}
+          <a
+            href={`mailto:${site.email}`}
+            className="font-medium text-foreground underline decoration-accent decoration-2 underline-offset-[4px] transition-colors hover:text-accent"
           >
-            →
-          </span>
-        </a>
+            {site.email}
+          </a>
+        </p>
       </div>
     </section>
   );

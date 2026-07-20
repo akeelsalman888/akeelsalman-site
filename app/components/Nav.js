@@ -63,7 +63,7 @@ export default function Nav() {
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? "Close menu" : "Open menu"}
-          className="-mr-2 inline-flex h-11 w-11 items-center justify-center rounded-full text-foreground sm:hidden"
+          className="-mr-2 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-foreground sm:hidden"
         >
           <svg
             viewBox="0 0 24 24"

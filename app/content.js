@@ -8,6 +8,10 @@ export const site = {
     "I build websites and internal tools for organizations — and automate the manual work behind them.",
   location: "Central Time (CST) · Remote / Worldwide",
   email: "akeelsalman888@gmail.com",
+  // Google Voice number — safe to publish (keeps the personal line private).
+  // `phone` is E.164 for tel: links; `phoneDisplay` is what's shown. Empty = hidden.
+  phone: "+14024170699",
+  phoneDisplay: "(402) 417-0699",
   socials: {
     github: "https://github.com/akeelsalman888",
     linkedin: "https://www.linkedin.com/in/akeelsalman",

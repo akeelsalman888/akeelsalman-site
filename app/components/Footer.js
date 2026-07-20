@@ -1,13 +1,16 @@
 import { site } from "../content";
-import { MailIcon, GitHubIcon, LinkedInIcon } from "./icons";
+import { MailIcon, PhoneIcon, GitHubIcon, LinkedInIcon } from "./icons";
 
 const ICONS = { github: GitHubIcon, linkedin: LinkedInIcon };
 const LABELS = { github: "GitHub", linkedin: "LinkedIn" };
 
 export default function Footer() {
-  // Email first, then any social profiles that have a URL set.
+  // Email first, then phone (if set), then any social profiles that have a URL set.
   const links = [
     { key: "email", label: "Email", href: `mailto:${site.email}`, Icon: MailIcon },
+    ...(site.phone
+      ? [{ key: "phone", label: "Call or text", href: `tel:${site.phone}`, Icon: PhoneIcon }]
+      : []),
     ...Object.entries(site.socials)
       .filter(([, url]) => url)
       .map(([name, url]) => ({
@@ -35,7 +38,7 @@ export default function Footer() {
               key={key}
               href={href}
               aria-label={label}
-              {...(key !== "email"
+              {...(key !== "email" && key !== "phone"
                 ? { target: "_blank", rel: "noopener noreferrer" }
                 : {})}
               className="flex h-11 w-11 items-center justify-center rounded-full border text-muted transition-colors hover:border-accent hover:bg-accent hover:text-accent-ink"

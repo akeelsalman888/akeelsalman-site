@@ -17,15 +17,26 @@ export default function Contact() {
 
         <ContactForm />
 
-        <p className="mt-10 text-sm text-muted">
-          Prefer email? Reach me directly at{" "}
-          <a
-            href={`mailto:${site.email}`}
-            className="font-medium text-foreground underline decoration-accent decoration-2 underline-offset-[4px] transition-colors hover:text-accent"
-          >
-            {site.email}
-          </a>
-        </p>
+        <div className="mt-10 flex flex-col gap-2 text-sm text-muted">
+          <p>
+            Prefer email? Reach me directly at{" "}
+            <a
+              href={`mailto:${site.email}`}
+              className="font-medium text-foreground underline decoration-accent decoration-2 underline-offset-[4px] transition-colors hover:text-accent"
+            >
+              {site.email}
+            </a>
+          </p>
+          <p>
+            Or call or text me at{" "}
+            <a
+              href={`tel:${site.phone}`}
+              className="font-medium text-foreground underline decoration-accent decoration-2 underline-offset-[4px] transition-colors hover:text-accent"
+            >
+              {site.phoneDisplay}
+            </a>
+          </p>
+        </div>
       </div>
     </section>
   );

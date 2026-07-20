@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { site } from "../content";
+import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { href: "#services", label: "Services" },
@@ -25,6 +26,7 @@ export default function Nav() {
           {site.name}
         </a>
 
+        <div className="flex items-center gap-2 sm:gap-6">
         {/* Desktop links */}
         <ul className="hidden items-center gap-9 sm:flex">
           {links.map((l) => (
@@ -50,6 +52,9 @@ export default function Nav() {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
           </span>
         </a>
+
+        {/* Theme toggle — visible on all sizes */}
+        <ThemeToggle />
 
         {/* Mobile menu toggle */}
         <button
@@ -80,6 +85,7 @@ export default function Nav() {
             )}
           </svg>
         </button>
+        </div>
       </nav>
 
       {/* Mobile dropdown panel */}

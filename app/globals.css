@@ -33,12 +33,32 @@
   --font-mono: var(--font-mono);
 }
 
+/*
+  Dark theme values. Light (above) is the default; dark applies when either:
+  1. the OS prefers dark AND the user hasn't explicitly chosen light, or
+  2. the user explicitly chose dark via the toggle ([data-theme="dark"]).
+  Kept in one custom-property list, applied by both selectors below.
+  The media query excludes [data-theme="light"] so an explicit light choice
+  always wins over the OS preference.
+*/
+:root[data-theme="dark"] {
+  --background: #16130e;
+  --foreground: #f3ecdf;
+  --muted: #a79d8c;
+  --faint: #857b6a; /* lightened from #766c5c to meet WCAG AA (~4.5:1) */
+  --border: #2e281f;
+  --accent: #e07d52;
+  --accent-ink: #1a1005;
+  --surface: #1e1a13;
+  --surface-2: #241f16;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --background: #16130e;
     --foreground: #f3ecdf;
     --muted: #a79d8c;
-    --faint: #857b6a; /* lightened from #766c5c to meet WCAG AA (~4.5:1) */
+    --faint: #857b6a;
     --border: #2e281f;
     --accent: #e07d52;
     --accent-ink: #1a1005;
@@ -81,8 +101,13 @@ body::before {
   mix-blend-mode: multiply;
 }
 
+:root[data-theme="dark"] body::before {
+  opacity: 0.18;
+  mix-blend-mode: screen;
+}
+
 @media (prefers-color-scheme: dark) {
-  body::before {
+  :root:not([data-theme="light"]) body::before {
     opacity: 0.18;
     mix-blend-mode: screen;
   }

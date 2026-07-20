@@ -6,7 +6,7 @@ export const site = {
   title: "Full-Stack Web Developer",
   tagline:
     "I build websites and internal tools for organizations — and automate the manual work behind them.",
-  location: "Central Time (CST) · Remote / Worldwide",
+  location: "Central Time (CT) · Remote / Worldwide",
   email: "akeelsalman888@gmail.com",
   // Google Voice number — safe to publish (keeps the personal line private).
   // `phone` is E.164 for tel: links; `phoneDisplay` is what's shown. Empty = hidden.

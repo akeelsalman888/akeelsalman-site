@@ -59,7 +59,7 @@ export const projects = [
 export const skills = [
   {
     group: "Languages",
-    items: ["JavaScript", "Python", "Java", "C++", "TypeScript", "SQL"],
+    items: ["JavaScript", "TypeScript", "SQL", "Python"],
   },
   {
     group: "Frontend",
@@ -77,7 +77,7 @@ export const skills = [
 
 export const about = {
   paragraphs: [
-    "I'm a self-taught developer with a strong foundation in computer systems. Over the past few years I've taught myself to build complete web applications — and, just as importantly, to understand the real-world workflows behind them, so what I build actually fits how people work.",
+    "I'm a self-taught developer with a strong foundation in computer systems, including core languages like Java and C++. Over the past few years I've taught myself to build complete web applications — and, just as importantly, to understand the real-world workflows behind them, so what I build actually fits how people work.",
     "Beyond writing code, I've taught programming and IT skills to students and professionals. That teaching background shapes how I work with clients: I listen first, break the problem down, and explain things in plain language — no jargon, no guesswork.",
   ],
   credentials: [

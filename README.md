@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# akeelsalman.com
 
-## Getting Started
+My personal portfolio — a fast, accessible, warm-editorial personal site built
+with the Next.js App Router. **Live at [akeelsalman.com](https://akeelsalman.com).**
 
-First, run the development server:
+## Highlights
+
+- **Light / dark theme** — toggle in the nav, persisted to `localStorage`,
+  defaults to the visitor's OS preference, with an anti-flash inline script so
+  there's no flash of the wrong theme on load.
+- **Responsive** — mobile navigation (hamburger dropdown) and layouts tuned for
+  phones through desktop.
+- **Contact form** — server-side API route backed by [Resend](https://resend.com);
+  no third-party form widgets, and the API key stays in environment variables.
+- **`/resume` page** — a print-optimized résumé with a one-click download-to-PDF
+  button, styled to match the site in both themes.
+- **SEO essentials** — Open Graph image, favicons, `sitemap.xml`, `robots.txt`,
+  and JSON-LD structured data.
+- **Accessibility & polish** — semantic markup, keyboard-friendly controls, and a
+  custom 404 page.
+
+## Tech stack
+
+- [Next.js 16](https://nextjs.org) (App Router) + [React 19](https://react.dev)
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [Resend](https://resend.com) for transactional email
+- Typography: Fraunces (display) + Inter (body), with a terracotta accent
+- Deployed on [Vercel](https://vercel.com)
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The dev server runs on [http://localhost:3100](http://localhost:3100).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+To exercise the contact form locally, set `RESEND_API_KEY` in a `.env.local`
+file (it is git-ignored and never committed).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project notes
 
-## Learn More
+- Site copy lives in `app/content.js` — a single place to edit text.
+- Components are colocated under `app/components/`.
+- Route handlers (e.g. the contact endpoint) live under `app/api/`.
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Personal project. Feel free to browse for reference; please don't republish the
+content or design as your own.

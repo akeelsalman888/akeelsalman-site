@@ -83,7 +83,7 @@ export const about = {
   credentials: [
     "Master of Information Technology",
     "Frontend & Backend Developer Bootcamp",
-    "Cisco Networking Academy (CCNA) — Southeast Community College",
+    "Cisco Networking Academy (CCNA & CCNP) — Southeast Community College",
   ],
 };
 

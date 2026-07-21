@@ -38,14 +38,14 @@ export const projects = [
     name: "Iman Islamic Center (IIC)",
     url: "https://www.iman-islam.org",
     description:
-      "A bilingual (English/Arabic, full RTL) website serving an Islamic community center — prayer times, events, online donations, and service applications. Built solo with React and a serverless backend, with an automated test suite that checks every page across languages and screen sizes before each release.",
+      "A bilingual (English/Arabic, full RTL) website serving an Islamic community center whose major gatherings (Eid) draw 700+ people — with prayer times, events, online donations, and service applications. Built solo with React and a serverless backend, with an automated test suite that checks every page across languages and screen sizes before each release.",
     tech: ["React", "Vite", "Google Apps Script", "Playwright", "i18n/RTL"],
   },
   {
     name: "Iman Connect",
     url: "https://connect.iman-islam.org",
     description:
-      "An internal operations portal that replaced the board's manual paper-and-email workflows — purchase approvals, reimbursements, volunteer scheduling, and donation reporting, all secured behind Google sign-in. Built end to end, solo.",
+      "An internal, SSO-gated operations portal for the center's board. Its two core systems — IPAS (Purchase Approval) and IPRS (Purchase Reimbursement) — carry a member's request end to end: email alerts to the finance committee, approve / deny / ask-a-question review inside the portal, an auto-generated PDF record, and a notification back to the requester. It also gives the board live visibility into donations. Built solo with React and Google Apps Script.",
     tech: ["React", "Google Apps Script", "Google SSO", "CI Visual Regression"],
     // Private, SSO-gated internal portal — not publicly reachable.
     // When screenshots exist, add caseStudyUrl (e.g. "/work/iman-connect")

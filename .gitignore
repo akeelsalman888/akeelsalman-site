@@ -42,3 +42,9 @@ next-env.d.ts
 
 # IDE
 /.idea/
+
+# local working docs — kept locally, never published (job-hunt plan, outreach
+# templates, resume source draft)
+getting-hired-plan.md
+outreach-kit.md
+resume-data.md

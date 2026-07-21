@@ -81,6 +81,7 @@ export const about = {
   ],
   credentials: [
     "Master of Information Technology — Sikkim Manipal University (2010)",
+    "Bachelor of Information Technology — Sikkim Manipal University (2008)",
     "Front-End & Back-End Developer Certifications — QuickStart (2026)",
     "Cisco Networking Academy (CCNA) — Southeast Community College (2019)",
   ],

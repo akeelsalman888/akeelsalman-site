@@ -54,12 +54,11 @@ export const projects = [
   },
 ];
 
-// TODO: review this list — keep only what you're comfortable being interviewed on.
-// Reorder items so your strongest skills come first in each group.
+// Reviewed 2026-07-21: trimmed to skills Akeel can defend in an interview.
 export const skills = [
   {
     group: "Languages",
-    items: ["JavaScript", "TypeScript", "SQL", "Python"],
+    items: ["JavaScript", "SQL", "Python"],
   },
   {
     group: "Frontend",

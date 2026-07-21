@@ -38,7 +38,7 @@ export const projects = [
     name: "Iman Islamic Center (IIC)",
     url: "https://www.iman-islam.org",
     description:
-      "A bilingual (English/Arabic, full RTL) website serving an Islamic community center whose major gatherings (Eid) draw 700+ people — with prayer times, events, online donations, and service applications. Built solo with React and a serverless backend, with an automated test suite that checks every page across languages and screen sizes before each release.",
+      "A bilingual (English/Arabic, full RTL) website serving an Islamic community center of 300+ families — with prayer times, events, online donations, and service applications. Built solo with React and a serverless backend, with an automated test suite that checks every page across languages and screen sizes before each release.",
     tech: ["React", "Vite", "Google Apps Script", "Playwright", "i18n/RTL"],
   },
   {

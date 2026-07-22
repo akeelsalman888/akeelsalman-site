@@ -67,8 +67,25 @@
   }
 }
 
-* {
-  border-color: var(--border);
+/*
+  Base-layer defaults. These MUST live in @layer base so Tailwind's utilities
+  (@layer utilities, declared later) win over them. If left unlayered, they beat
+  every utility regardless of specificity — which silently overrode border-color
+  utilities (border-accent, border-foreground) and the `position` on positioned
+  elements (the sticky nav, and the sr-only skip link — which then stretched to a
+  full-width bar on focus instead of floating as a small pill).
+*/
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  /* Keep real content above the grain layer (see body::before). Utilities like
+     .sticky / .absolute still win, since utilities is a later layer than base. */
+  body > * {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 html {
@@ -111,12 +128,6 @@ body::before {
     opacity: 0.18;
     mix-blend-mode: screen;
   }
-}
-
-/* Keep real content above the grain layer. */
-body > * {
-  position: relative;
-  z-index: 1;
 }
 
 /* Editorial display type. */

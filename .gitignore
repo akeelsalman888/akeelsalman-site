@@ -44,7 +44,15 @@ next-env.d.ts
 /.idea/
 
 # local working docs — kept locally, never published (job-hunt plan, outreach
-# templates, resume source draft)
+# templates, resume source draft, prospect list)
 getting-hired-plan.md
 outreach-kit.md
 resume-data.md
+local-target-list.*
+
+# client demo mockups (use real business names — never published from this repo)
+/mockups/
+
+# raw screenshot staging — unblurred captures land here; never committed.
+# Only blurred, curated keepers get moved into /public/work/... by hand.
+/screenshots-inbox/

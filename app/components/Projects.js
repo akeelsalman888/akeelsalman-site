@@ -1,7 +1,45 @@
 import Section from "./Section";
 import { projects } from "../content";
 
-function RowInner({ p, index, badge, footer }) {
+function ScreenshotsIcon({ className = "" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="4.5" width="18" height="15" rx="2" />
+      <circle cx="8.5" cy="9.5" r="1.5" />
+      <path d="m4 17 4.5-4.5 3 3L16 11l4 4" />
+    </svg>
+  );
+}
+
+function ExternalLinkIcon({ className = "" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M14 4h6v6" />
+      <path d="M20 4 10 14" />
+      <path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5" />
+    </svg>
+  );
+}
+
+function RowInner({ p, index, badge, footer, footerAccent, footerIcon }) {
   return (
     <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-[3rem_1fr]">
       <span className="font-display text-2xl italic text-faint transition-colors group-hover:text-accent">
@@ -29,7 +67,14 @@ function RowInner({ p, index, badge, footer }) {
             ))}
           </ul>
         )}
-        <span className="mt-5 block text-sm text-faint">{footer}</span>
+        {footerAccent ? (
+          <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-sm font-medium text-accent transition-colors group-hover:bg-accent/20">
+            {footerIcon}
+            {footer}
+          </span>
+        ) : (
+          <span className="mt-5 block text-sm text-faint">{footer}</span>
+        )}
       </div>
     </div>
   );
@@ -56,11 +101,13 @@ export default function Projects() {
                   p={p}
                   index={i}
                   badge={
-                    <span className="eyebrow text-muted transition-transform group-hover:translate-x-1">
+                    <span className="eyebrow rounded-full bg-accent px-3 py-1 text-accent-ink transition-transform group-hover:translate-x-1">
                       Case study →
                     </span>
                   }
                   footer="View screenshots & walkthrough"
+                  footerAccent
+                  footerIcon={<ScreenshotsIcon className="h-4 w-4" />}
                 />
               </a>
             );
@@ -97,11 +144,13 @@ export default function Projects() {
                 p={p}
                 index={i}
                 badge={
-                  <span className="text-lg text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent">
-                    ↗
+                  <span className="eyebrow rounded-full bg-accent px-3 py-1 text-accent-ink transition-transform group-hover:translate-x-1">
+                    Visit live site ↗
                   </span>
                 }
-                footer={p.url.replace(/^https?:\/\//, "")}
+                footer={`Built by me — ${p.url.replace(/^https?:\/\//, "")}`}
+                footerAccent
+                footerIcon={<ExternalLinkIcon className="h-4 w-4" />}
               />
             </a>
           );

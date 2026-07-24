@@ -2,15 +2,13 @@ import Link from "next/link";
 import Nav from "../../components/Nav";
 import Footer from "../../components/Footer";
 import { site, testimonials } from "../../content";
+import ScreenshotGallery from "./ScreenshotGallery";
 
 export const metadata = {
   title: `Iman Connect — Case Study · ${site.name}`,
   description:
     "How I designed and built Iman Connect: an SSO-gated operations portal that carries a community center's purchase approvals and reimbursements end to end.",
   alternates: { canonical: "/work/iman-connect" },
-  // Keep this page out of search until the screenshots are in and it's linked
-  // from the site. Flip `index` to true (and add it to sitemap.js) when ready.
-  robots: { index: false, follow: true },
 };
 
 // Facts — kept aligned with content.js. No invented metrics.
@@ -99,53 +97,6 @@ const shots = [
       "Student Payments — a simple paid/unpaid ledger for the Quran, daycare, and weekend school programs. (Names shown are placeholders.)",
   },
 ];
-
-function ImageGlyph({ className = "" }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="3" y="4.5" width="18" height="15" rx="2" />
-      <circle cx="8.5" cy="9.5" r="1.5" />
-      <path d="m4 17 4.5-4.5 3 3L16 11l4 4" />
-    </svg>
-  );
-}
-
-function Shot({ src, alt, caption }) {
-  return (
-    <figure className="flex flex-col gap-3">
-      {src ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={src}
-          alt={alt}
-          className="w-full rounded-xl border shadow-sm"
-          loading="lazy"
-        />
-      ) : (
-        <div
-          className="flex aspect-[16/10] w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed bg-surface px-6 text-center"
-          role="img"
-          aria-label={`Screenshot placeholder: ${alt}`}
-        >
-          <ImageGlyph className="h-8 w-8 text-faint" />
-          <span className="eyebrow text-faint">Screenshot to add</span>
-        </div>
-      )}
-      <figcaption className="text-sm leading-relaxed text-faint">
-        {caption}
-      </figcaption>
-    </figure>
-  );
-}
 
 export default function ImanConnectCaseStudy() {
   const testimonial = testimonials.find((t) => t.name === "Hamza Sindi");
@@ -309,14 +260,11 @@ export default function ImanConnectCaseStudy() {
           </h2>
           <p className="mt-4 max-w-2xl leading-relaxed text-muted">
             Iman Connect is a private, SSO-gated system, so these are captured
-            views of the board's real workflow.
+            views of the board's real workflow. Tap or click any screenshot to
+            view it larger.
           </p>
 
-          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {shots.map((s) => (
-              <Shot key={s.alt} {...s} />
-            ))}
-          </div>
+          <ScreenshotGallery shots={shots} />
         </section>
 
         {/* Technical decisions */}

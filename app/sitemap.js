@@ -13,5 +13,11 @@ export default function sitemap() {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    {
+      url: "https://akeelsalman.com/work/iman-connect",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
   ];
 }

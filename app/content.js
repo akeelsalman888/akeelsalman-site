@@ -47,10 +47,10 @@ export const projects = [
     description:
       "An internal, SSO-gated operations portal for the center's board. Its two core systems — IPAS (Purchase Approval) and IPRS (Purchase Reimbursement) — carry a member's request end to end: email alerts to the finance committee, approve / deny / ask-a-question review inside the portal, an auto-generated PDF record, and a notification back to the requester. It also gives the board live visibility into donations. Built solo with React and Google Apps Script.",
     tech: ["React", "Google Apps Script", "Google SSO", "CI Visual Regression"],
-    // Private, SSO-gated internal portal — not publicly reachable.
-    // When screenshots exist, add caseStudyUrl (e.g. "/work/iman-connect")
-    // and the card will link to the case study instead.
+    // Private, SSO-gated internal portal — not publicly reachable directly,
+    // but the case study below has approved, sanitized screenshots.
     private: true,
+    caseStudyUrl: "/work/iman-connect",
   },
 ];
 

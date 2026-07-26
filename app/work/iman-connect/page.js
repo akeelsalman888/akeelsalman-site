@@ -314,7 +314,7 @@ export default function ImanConnectCaseStudy() {
             like to hear about it.
           </p>
           <a
-            href={`mailto:${site.email}`}
+            href="/#contact"
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-ink transition-transform hover:-translate-y-0.5"
           >
             Start a conversation

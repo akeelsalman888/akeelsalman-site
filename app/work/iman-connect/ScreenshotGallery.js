@@ -22,25 +22,6 @@ function ImageGlyph({ className = "" }) {
   );
 }
 
-function ZoomIcon({ className = "" }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="7" />
-      <path d="m20 20-3.5-3.5" />
-      <path d="M11 8v6M8 11h6" />
-    </svg>
-  );
-}
-
 function CloseIcon({ className = "" }) {
   return (
     <svg
@@ -134,9 +115,6 @@ export default function ScreenshotGallery({ shots }) {
                   className="w-full transition-transform duration-300 group-hover:scale-[1.03]"
                   loading="lazy"
                 />
-                <span className="absolute bottom-3 left-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white opacity-90 backdrop-blur-sm transition-opacity group-hover:opacity-100">
-                  <ZoomIcon className="h-4 w-4" />
-                </span>
               </button>
             ) : (
               <div

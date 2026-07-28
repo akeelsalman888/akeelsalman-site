@@ -5,18 +5,6 @@ import { useEffect } from "react";
 // Maximum card rotation on each axis, in degrees.
 const MAX_DEG = 9;
 
-// Fallback if --grid can't be read for any reason. Must match globals.css.
-const FALLBACK_GRID = 64;
-
-/*
-  Width of the node cluster in cells. MUST match the `* 8` in the .amb-nodes rule,
-  and must stay EVEN: the layer is centred on a snapped intersection by shifting it
-  back half its width, and only an even span makes that half a whole number of
-  cells. An odd span lands the offset on a half-cell and every dot drifts off the
-  grid lines it is supposed to be sitting on.
-*/
-const NODE_SPAN = 8;
-
 /*
   How far each background layer moves, in px, at full pointer deflection.
 
@@ -25,21 +13,32 @@ const NODE_SPAN = 8;
   back the other way; that opposition is what reads as depth instead of the whole
   background sliding as one sheet.
 
-  `grid` must stay under the CSS overhang (-128px, two cells) or the pull would
-  drag an empty edge into view.
+  `grid` must stay under the CSS overhang (three cells, 132px at a 44px grid) or
+  the pull would drag an empty edge into view.
 */
-const DRIFT = { grid: 48, glow: -30 };
+const DRIFT = { grid: 72, glow: -44 };
 
 // Easing applied per frame toward the pointer. Lower = more lag on the pull.
-const EASE_DRIFT = 0.09;
-const EASE_GLOW = 0.16;
+const EASE_DRIFT = 0.12;
+const EASE_GLOW = 0.2;
+
+/*
+  Pointer speed → how much the warm wash swells, published as --gs.
+
+  SPEED_FULL is the per-frame travel in px that counts as "full tilt"; anything
+  faster is clamped. Rise is quicker than fall so the wash answers a flick
+  immediately but settles gently rather than snapping shut.
+*/
+const SPEED_FULL = 42;
+const SPEED_SWELL = 0.26;
+const EASE_SPEED_UP = 0.28;
+const EASE_SPEED_DOWN = 0.07;
 
 /*
   Everything the pointer drives, from one listener and one animation loop:
 
-  1. The grid lights up. A cluster of the grid's own intersection points glows
-     around the pointer, snapped to the nearest intersection so it steps from one
-     to the next, plus a warm wash that follows smoothly behind it.
+  1. The grid lights up. A warm wash follows the pointer, swelling with how fast
+     it moves, and the background layers drift against each other underneath it.
 
   2. Cards tilt. Anything marked `data-tilt` tips in perspective toward the
      pointer and springs back when it leaves.
@@ -59,25 +58,9 @@ export default function PointerEffects() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!finePointer.matches || reduced.matches) return;
 
-    const nodes = document.querySelector(".amb-nodes");
     const glow = document.querySelector(".amb-cursor-glow");
     const gridEl = document.querySelector(".amb-grid");
     const pools = document.querySelector(".amb-glow");
-
-    /*
-      Read the cell size from the same custom property the grid background uses,
-      so the dots can never drift out of step with the lines they sit on. Re-read
-      on resize in case it's ever made responsive.
-    */
-    let grid = FALLBACK_GRID;
-    const readGrid = () => {
-      const raw = getComputedStyle(document.documentElement)
-        .getPropertyValue("--grid")
-        .trim();
-      const n = parseFloat(raw);
-      grid = Number.isFinite(n) && n > 0 ? n : FALLBACK_GRID;
-    };
-    readGrid();
 
     let pointerX = -1000;
     let pointerY = -1000;
@@ -85,6 +68,9 @@ export default function PointerEffects() {
     let glowY = -1000;
     let driftX = 0; // eased, normalised −1…1 from the viewport centre
     let driftY = 0;
+    let lastX = -1000; // pointer position at the previous frame, for speed
+    let lastY = -1000;
+    let speed = 0; // eased, normalised 0…1
     let live = false;
     let frame = 0;
     let tilted = null;
@@ -105,7 +91,8 @@ export default function PointerEffects() {
         // Start the wash where the pointer is, rather than flying in from 0,0.
         glowX = pointerX;
         glowY = pointerY;
-        nodes?.classList.add("is-live");
+        lastX = pointerX;
+        lastY = pointerY;
         glow?.classList.add("is-live");
       }
 
@@ -133,7 +120,6 @@ export default function PointerEffects() {
 
     const onLeave = () => {
       live = false;
-      nodes?.classList.remove("is-live");
       glow?.classList.remove("is-live");
       releaseTilt(tilted);
       tilted = null;
@@ -153,34 +139,26 @@ export default function PointerEffects() {
       driftX += (nx - driftX) * EASE_DRIFT;
       driftY += (ny - driftY) * EASE_DRIFT;
 
-      const gdx = driftX * DRIFT.grid;
-      const gdy = driftY * DRIFT.grid;
-
       if (gridEl) {
-        gridEl.style.setProperty("--dx", `${gdx.toFixed(2)}px`);
-        gridEl.style.setProperty("--dy", `${gdy.toFixed(2)}px`);
+        gridEl.style.setProperty("--dx", `${(driftX * DRIFT.grid).toFixed(2)}px`);
+        gridEl.style.setProperty("--dy", `${(driftY * DRIFT.grid).toFixed(2)}px`);
       }
       if (pools) {
         pools.style.setProperty("--gdx", `${(driftX * DRIFT.glow).toFixed(2)}px`);
         pools.style.setProperty("--gdy", `${(driftY * DRIFT.glow).toFixed(2)}px`);
       }
 
-      // --- node cluster ----------------------------------------------------
-      if (nodes) {
-        /*
-          Snap in the GRID's own coordinate space, not the screen's. The grid has
-          drifted by (gdx, gdy), so a line drawn at 64n now sits at 64n + gdx on
-          screen. Subtracting the drift before rounding finds the intersection the
-          pointer is really nearest; adding it back afterwards puts the cluster
-          where that intersection currently is. Snapping on raw screen coordinates
-          would leave the dots sliding off the lines as the grid moved.
-        */
-        const snapX = Math.round((pointerX - gdx) / grid) * grid;
-        const snapY = Math.round((pointerY - gdy) / grid) * grid;
-        const half = (NODE_SPAN / 2) * grid;
-        nodes.style.setProperty("--nx", `${(snapX + gdx - half).toFixed(2)}px`);
-        nodes.style.setProperty("--ny", `${(snapY + gdy - half).toFixed(2)}px`);
-      }
+      // --- pointer speed ---------------------------------------------------
+      /*
+        Measured per frame rather than from pointermove timestamps: a stationary
+        pointer fires no events at all, so an event-driven reading would freeze at
+        whatever the last flick was instead of decaying back to rest.
+      */
+      const travel = Math.hypot(pointerX - lastX, pointerY - lastY);
+      lastX = pointerX;
+      lastY = pointerY;
+      const target = live ? Math.min(travel / SPEED_FULL, 1) : 0;
+      speed += (target - speed) * (target > speed ? EASE_SPEED_UP : EASE_SPEED_DOWN);
 
       // --- warm wash -------------------------------------------------------
       if (glow) {
@@ -189,6 +167,7 @@ export default function PointerEffects() {
         glowY += (pointerY - glowY) * EASE_GLOW;
         glow.style.setProperty("--gx", `${glowX.toFixed(1)}px`);
         glow.style.setProperty("--gy", `${glowY.toFixed(1)}px`);
+        glow.style.setProperty("--gs", (1 + speed * SPEED_SWELL).toFixed(3));
       }
 
       frame = requestAnimationFrame(render);
@@ -196,7 +175,6 @@ export default function PointerEffects() {
 
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", readGrid);
     window.addEventListener("blur", onLeave);
     document.addEventListener("pointerleave", onLeave);
     frame = requestAnimationFrame(render);
@@ -206,7 +184,6 @@ export default function PointerEffects() {
       releaseTilt(tilted);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", readGrid);
       window.removeEventListener("blur", onLeave);
       document.removeEventListener("pointerleave", onLeave);
     };

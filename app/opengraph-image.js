@@ -29,7 +29,7 @@ export default function OpengraphImage() {
               fontSize: 24,
               letterSpacing: "0.28em",
               textTransform: "uppercase",
-              color: "#e07d52",
+              color: "#f0b429",
               fontWeight: 700,
             }}
           >
@@ -41,7 +41,7 @@ export default function OpengraphImage() {
               marginTop: 24,
               width: 96,
               height: 6,
-              backgroundColor: "#e07d52",
+              backgroundColor: "#f0b429",
               borderRadius: 3,
             }}
           />

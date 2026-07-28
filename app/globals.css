@@ -5,16 +5,16 @@
 
   Deliberately NOT the reference portfolio's palette: the canvas is a cool
   near-black rather than #0a0a0a, surfaces are their own slate-tinted tokens
-  instead of Tailwind's neutral-950/900, and the accent is Akeel's own terracotta
-  carried over from the earlier version of this site — the reference uses white as
-  its only accent. Type is Space Grotesk over Inter, not Outfit throughout.
+  instead of Tailwind's neutral-950/900, and the accent is an amber gold — the
+  reference uses white as its only accent. Type is Space Grotesk over Inter, not
+  Outfit throughout.
 */
 
 :root {
   /* Grid cell size. Shared by the grid background and the cursor cell highlight
      that snaps onto it — they must not drift apart, so it lives in one place
-     (PointerEffects.js reads it from here rather than hard-coding 64). */
-  --grid: 64px;
+     (PointerEffects.js reads it from here rather than hard-coding it). */
+  --grid: 44px;
 
   --background: #0a0b0e;
   --foreground: #f4f4f5;
@@ -22,10 +22,16 @@
   --faint: #74757e;
   --border: rgba(255, 255, 255, 0.09);
 
-  /* Akeel's accent, from the previous iteration of this site. */
-  --accent: #e07d52;
-  --accent-ink: #17100a;
-  --accent-soft: rgba(224, 125, 82, 0.12);
+  /*
+    Amber gold. Chosen over the previous terracotta (#e07d52), which sat at
+    almost exactly Claude's brand orange (#d97757) — same hue family, same
+    saturation. This is the same warmth moved up the spectrum to a yellow-gold
+    (hue 42° rather than 18°), so the warm-accent-on-cool-canvas relationship the
+    ambient layers depend on is unchanged. 10.5:1 on --background.
+  */
+  --accent: #f0b429;
+  --accent-ink: #1a1204;
+  --accent-soft: rgba(240, 180, 41, 0.12);
 
   --surface: #101217;
   --surface-2: #16191f;
@@ -130,7 +136,7 @@ body {
   background:
     radial-gradient(
       44vw 44vw at 80% 14%,
-      rgba(224, 125, 82, 0.085),
+      rgba(240, 180, 41, 0.085),
       transparent 68%
     ),
     radial-gradient(
@@ -145,25 +151,28 @@ body {
   as --dx/--dy so PointerEffects.js can offset the node cluster by exactly the
   same amount and keep the dots on the lines.
 
-  `inset: -128px` is load-bearing, not a rough guess. The layer has to be
+  The negative inset is load-bearing, not a rough guess. The layer has to be
   oversized or the pull drags an empty edge into view — but the overhang must be a
   WHOLE multiple of the cell size, because the background tiles start at the
-  element's own origin. At -128px (two cells) the lines still fall on exact
-  multiples of 64 in viewport coordinates (-128, -64, 0, 64 …), which is what makes
-  the snapping arithmetic valid. An arbitrary overhang like -8% would put them at
-  an unpredictable offset and the dots would sit beside the lines, not on them.
+  element's own origin. Expressed as `--grid * -3` the lines still fall on exact
+  multiples of the cell size in viewport coordinates, which is what makes the
+  snapping arithmetic valid. An arbitrary overhang like -8% would put them at an
+  unpredictable offset and the dots would sit beside the lines, not on them.
 
-  Two cells rather than one so the pull can be big enough to actually notice.
+  Three cells rather than one so the pull can be big enough to actually notice —
+  DRIFT.grid in PointerEffects.js must stay under this overhang.
 */
 .amb-grid {
   position: absolute;
-  inset: -128px;
+  inset: calc(var(--grid, 44px) * -3);
   will-change: translate, opacity;
   translate: var(--dx, 0px) var(--dy, 0px);
+  /* Fainter lines than the larger cells carried: at this density the same alpha
+     reads as a busy mesh rather than a quiet lattice. */
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.075) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.075) 1px, transparent 1px);
-  background-size: var(--grid, 64px) var(--grid, 64px);
+    linear-gradient(rgba(255, 255, 255, 0.058) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.058) 1px, transparent 1px);
+  background-size: var(--grid, 44px) var(--grid, 44px);
   /* Generous mask — the grid should read across most of the screen, only easing
      off at the far corners. */
   mask-image: radial-gradient(115% 95% at 50% 40%, #000 45%, transparent 100%);
@@ -181,80 +190,38 @@ body {
 }
 
 /*
-  Cursor effects on the grid. Both are positioned only by `translate`, so moving
-  them is a compositor job — no full-screen repaint per frame.
+  Warm wash around the pointer, so the grid nearby is clearly brighter. Tighter
+  than it was — a 30rem pool washed out most of the viewport and read as fog
+  rather than a pointer halo.
+
+  Moved by `translate` and sized by `scale` only, both compositor properties, so
+  following the pointer costs no repaint per frame. --gs is pointer speed,
+  written by PointerEffects.js: the wash swells as the cursor moves and settles
+  back when it stops.
 */
-.amb-nodes,
 .amb-cursor-glow {
   position: absolute;
   left: 0;
   top: 0;
   opacity: 0;
-  will-change: translate, opacity;
+  will-change: translate, scale, opacity;
   transition: opacity 400ms ease;
-}
-
-.amb-nodes.is-live,
-.amb-cursor-glow.is-live {
-  opacity: 1;
-}
-
-/*
-  The grid's own intersections lighting up. Nothing is drawn on top of the page —
-  this layer is a field of small accent dots sitting exactly on the grid's corner
-  points, radially masked so only the ones near the pointer show.
-
-  Two pieces of arithmetic keep the dots on the intersections:
-
-  · The tile is shifted back by half a cell. A radial-gradient centres itself in
-    its tile, so an unshifted pattern would put dots in the middle of each cell;
-    offsetting by -50% moves them onto the corners (0, 64, 128 …).
-
-  · The layer is 8 cells square — an EVEN count on purpose. Its centre is then
-    4 cells in, a whole multiple of the cell size, so PointerEffects.js can centre
-    it on a snapped intersection without knocking the pattern out of alignment.
-    An odd span would put the centre on a half-cell and misalign every dot.
-*/
-.amb-nodes {
-  width: calc(var(--grid, 64px) * 8);
-  height: calc(var(--grid, 64px) * 8);
-  translate: var(--nx, -2000px) var(--ny, -2000px);
-  /* Solid core plus a soft halo, so each node reads as a lit point rather than a
-     flat dot. */
-  background-image: radial-gradient(
-    circle,
-    rgb(224, 125, 82) 2.2px,
-    rgba(224, 125, 82, 0.35) 3.6px,
-    transparent 5.5px
-  );
-  background-size: var(--grid, 64px) var(--grid, 64px);
-  background-position: calc(var(--grid, 64px) * -0.5)
-    calc(var(--grid, 64px) * -0.5);
-  /* Brightest at the centre, gone by the edge. */
-  mask-image: radial-gradient(
-    circle closest-side,
-    #000 0%,
-    rgba(0, 0, 0, 0.6) 40%,
-    transparent 78%
-  );
-  transition:
-    translate 110ms cubic-bezier(0.2, 0.7, 0.2, 1),
-    opacity 400ms ease;
-}
-
-/* Warm wash around the pointer, so the grid nearby is clearly brighter. */
-.amb-cursor-glow {
-  width: 30rem;
-  height: 30rem;
-  margin: -15rem 0 0 -15rem;
+  width: 18rem;
+  height: 18rem;
+  margin: -9rem 0 0 -9rem;
   border-radius: 9999px;
   translate: var(--gx, -600px) var(--gy, -600px);
+  scale: var(--gs, 1);
   background: radial-gradient(
     circle,
-    rgba(224, 125, 82, 0.16),
-    rgba(224, 125, 82, 0.05) 40%,
+    rgba(240, 180, 41, 0.17),
+    rgba(240, 180, 41, 0.055) 40%,
     transparent 68%
   );
+}
+
+.amb-cursor-glow.is-live {
+  opacity: 1;
 }
 
 /* ---------------------------------------------------------------------------
@@ -579,7 +546,6 @@ html[data-intro="done"] .intro-overlay {
     animation: none;
     opacity: 0.85;
   }
-  .amb-nodes,
   .amb-cursor-glow {
     display: none;
   }
@@ -593,7 +559,6 @@ html[data-intro="done"] .intro-overlay {
 
 /* Touch devices have no hovering pointer to react to. Tilt is gated in JS. */
 @media (hover: none), (pointer: coarse) {
-  .amb-nodes,
   .amb-cursor-glow {
     display: none;
   }

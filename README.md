@@ -24,7 +24,7 @@ with the Next.js App Router. **Live at [akeelsalman.com](https://akeelsalman.com
 - [Next.js 16](https://nextjs.org) (App Router) + [React 19](https://react.dev)
 - [Tailwind CSS v4](https://tailwindcss.com)
 - [Resend](https://resend.com) for transactional email
-- Typography: Fraunces (display) + Inter (body), with a terracotta accent
+- Typography: Space Grotesk (display) + Inter (body), with an amber-gold accent
 - Deployed on [Vercel](https://vercel.com)
 
 ## Local development

@@ -2,16 +2,28 @@ import { site } from "../content";
 import TypeRotator from "./TypeRotator";
 import { MailIcon, GitHubIcon, LinkedInIcon } from "./icons";
 
-// Rotating titles — each one is something the work in content.js actually backs up.
+/*
+  Rotating titles — each one is something the work in content.js actually backs up.
+
+  Deliberately scope-based ("Backend & API") rather than language-based: the
+  résumé puts Java and C++ at foundation level, so a title naming them would
+  outrun the evidence, while scope holds up whether the question is about Node or
+  Python. "Web" is gone from the lead title for the same reason in reverse — it
+  was capping the whole set at frontend.
+*/
 const titles = [
-  "Full-Stack Web Developer",
-  "React & Next.js Developer",
+  "Full-Stack Developer",
+  "Backend & API Developer",
   "Internal Tools Builder",
   "Automation Engineer",
 ];
 
-// Kept to tools he can defend in an interview (mirrors the toolkit section).
-const stack = ["React", "Next.js", "Node.js", "Google Apps Script", "Playwright"];
+/*
+  Kept to tools he can defend in an interview (mirrors the toolkit section). These
+  are the evidence directly under the rotating title, so they have to cover the
+  backend claim too, not just the React one.
+*/
+const stack = ["React", "Next.js", "Node.js", "Python", "SQL", "Playwright"];
 
 const socials = [
   { href: site.socials.github, label: "GitHub", Icon: GitHubIcon },

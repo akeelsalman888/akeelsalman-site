@@ -3,7 +3,7 @@
 
 export const site = {
   name: "Akeel Salman",
-  title: "Full-Stack Web Developer",
+  title: "Full-Stack Developer",
   tagline:
     "I build websites and internal tools for organizations — and automate the manual work behind them.",
   location: "Central Time (CT) · Remote / Worldwide",
@@ -67,12 +67,12 @@ export const skills = [
     items: ["JavaScript", "Java", "Python", "SQL"],
   },
   {
-    group: "Frontend",
-    items: ["React", "Next.js", "Vite", "Tailwind CSS", "HTML & CSS", "i18n / RTL"],
-  },
-  {
     group: "Backend & Data",
     items: ["Node.js", "Google Apps Script", "REST APIs", "Databases"],
+  },
+  {
+    group: "Frontend",
+    items: ["React", "Next.js", "Vite", "Tailwind CSS", "HTML & CSS", "i18n / RTL"],
   },
   {
     group: "Tooling & Practices",
@@ -82,7 +82,7 @@ export const skills = [
 
 export const about = {
   paragraphs: [
-    "I have a Master's in Information Technology and a strong foundation in computer systems, including core languages like Java, C++, and Python. On top of that, I've taught myself to build complete modern web applications — and, just as importantly, to understand the real-world workflows behind them, so what I build actually fits how people work.",
+    "I have a Master's in Information Technology and a strong foundation in computer systems, including core languages like Java, C++, and Python. On top of that, I've taught myself to build complete modern web applications — front end, backend, and the automation that connects them — and, just as importantly, to understand the real-world workflows behind them, so what I build actually fits how people work.",
     "Beyond writing code, I've taught programming and IT skills to students and professionals. That teaching background shapes how I work with clients: I listen first, break the problem down, and explain things in plain language — no jargon, no guesswork.",
   ],
   credentials: [

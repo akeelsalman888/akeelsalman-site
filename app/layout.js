@@ -29,9 +29,12 @@ export const metadata = {
   description: site.tagline,
   keywords: [
     "Akeel Salman",
+    "Full-Stack Developer",
     "Full-Stack Web Developer",
+    "backend developer",
     "React developer",
     "Next.js developer",
+    "Python developer",
     "internal tools",
     "web automation",
   ],

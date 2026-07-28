@@ -1,21 +1,34 @@
 @import "tailwindcss";
 
 /*
-  Editorial / Warm design system.
-  Warm paper light theme + warm-ink dark theme, terracotta accent,
-  serif display type (Fraunces) over a clean grotesque (Inter).
+  Dark editorial design system.
+
+  Deliberately NOT the reference portfolio's palette: the canvas is a cool
+  near-black rather than #0a0a0a, surfaces are their own slate-tinted tokens
+  instead of Tailwind's neutral-950/900, and the accent is Akeel's own terracotta
+  carried over from the earlier version of this site — the reference uses white as
+  its only accent. Type is Space Grotesk over Inter, not Outfit throughout.
 */
 
 :root {
-  --background: #faf7f1;
-  --foreground: #211d18;
-  --muted: #6f665a;
-  --border: #e7dfd2;
-  --accent: #bd4f2c;
-  --accent-ink: #ffffff;
-  --faint: #7a7062; /* darkened from #9a9084 to meet WCAG AA (~4.5:1) */
-  --surface: #f3ecdf;
-  --surface-2: #efe6d6;
+  /* Grid cell size. Shared by the grid background and the cursor cell highlight
+     that snaps onto it — they must not drift apart, so it lives in one place
+     (PointerEffects.js reads it from here rather than hard-coding 64). */
+  --grid: 64px;
+
+  --background: #0a0b0e;
+  --foreground: #f4f4f5;
+  --muted: #a4a5ad;
+  --faint: #74757e;
+  --border: rgba(255, 255, 255, 0.09);
+
+  /* Akeel's accent, from the previous iteration of this site. */
+  --accent: #e07d52;
+  --accent-ink: #17100a;
+  --accent-soft: rgba(224, 125, 82, 0.12);
+
+  --surface: #101217;
+  --surface-2: #16191f;
 }
 
 @theme inline {
@@ -29,59 +42,22 @@
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --font-sans: var(--font-inter);
-  --font-serif: var(--font-fraunces);
   --font-mono: var(--font-mono);
-}
-
-/*
-  Dark theme values. Light (above) is the default; dark applies when either:
-  1. the OS prefers dark AND the user hasn't explicitly chosen light, or
-  2. the user explicitly chose dark via the toggle ([data-theme="dark"]).
-  Kept in one custom-property list, applied by both selectors below.
-  The media query excludes [data-theme="light"] so an explicit light choice
-  always wins over the OS preference.
-*/
-:root[data-theme="dark"] {
-  --background: #16130e;
-  --foreground: #f3ecdf;
-  --muted: #a79d8c;
-  --faint: #857b6a; /* lightened from #766c5c to meet WCAG AA (~4.5:1) */
-  --border: #2e281f;
-  --accent: #e07d52;
-  --accent-ink: #1a1005;
-  --surface: #1e1a13;
-  --surface-2: #241f16;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --background: #16130e;
-    --foreground: #f3ecdf;
-    --muted: #a79d8c;
-    --faint: #857b6a;
-    --border: #2e281f;
-    --accent: #e07d52;
-    --accent-ink: #1a1005;
-    --surface: #1e1a13;
-    --surface-2: #241f16;
-  }
 }
 
 /*
   Base-layer defaults. These MUST live in @layer base so Tailwind's utilities
   (@layer utilities, declared later) win over them. If left unlayered, they beat
   every utility regardless of specificity — which silently overrode border-color
-  utilities (border-accent, border-foreground) and the `position` on positioned
-  elements (the sticky nav, and the sr-only skip link — which then stretched to a
-  full-width bar on focus instead of floating as a small pill).
+  utilities and the `position` on positioned elements.
 */
 @layer base {
   * {
     border-color: var(--border);
   }
 
-  /* Keep real content above the grain layer (see body::before). Utilities like
-     .sticky / .absolute still win, since utilities is a later layer than base. */
+  /* Keep real content above the ambient background layer. Utilities like
+     .fixed / .absolute still win, since utilities is a later layer. */
   body > * {
     position: relative;
     z-index: 1;
@@ -90,6 +66,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Offset for the fixed nav so #anchor jumps don't hide headings underneath it. */
+  scroll-padding-top: 6rem;
 }
 
 body {
@@ -99,69 +77,275 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Visible keyboard focus ring — shows only for keyboard users, matches accent. */
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #06070a;
+}
+::-webkit-scrollbar-thumb {
+  background: #24272f;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #343841;
+}
+
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 3px;
 }
 
-/* Subtle paper grain — gives the surface an analog, human feel. */
-body::before {
-  content: "";
+/* ---------------------------------------------------------------------------
+   Ambient background. Layers are rendered in the markup by Ambience.js so they
+   exist without JavaScript; the parallax offsets below are the only part JS
+   drives, by writing --dx/--dy (and --sx/--sy for the cursor spotlight).
+
+   Uses soft radial-gradients rather than `filter: blur()` — blurring elements
+   this large is expensive to composite on every pointer move.
+   --------------------------------------------------------------------------- */
+
+.amb {
   position: fixed;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
   pointer-events: none;
-  opacity: 0.5;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mix-blend-mode: multiply;
 }
 
-:root[data-theme="dark"] body::before {
-  opacity: 0.18;
-  mix-blend-mode: screen;
+/* Pools of light. Drift further than the grid does, which is what reads as depth
+   rather than the whole background sliding as one sheet. */
+.amb-glow {
+  position: absolute;
+  /* Oversized so the drift never pulls an edge into view. */
+  inset: -8%;
+  will-change: translate;
+  translate: var(--gdx, 0px) var(--gdy, 0px);
+  background:
+    radial-gradient(
+      44vw 44vw at 80% 14%,
+      rgba(224, 125, 82, 0.085),
+      transparent 68%
+    ),
+    radial-gradient(
+      38vw 38vw at 14% 84%,
+      rgba(255, 255, 255, 0.035),
+      transparent 70%
+    );
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) body::before {
-    opacity: 0.18;
-    mix-blend-mode: screen;
+/*
+  The grid. It drifts with the mouse, and the amount it has drifted is published
+  as --dx/--dy so PointerEffects.js can offset the node cluster by exactly the
+  same amount and keep the dots on the lines.
+
+  `inset: -128px` is load-bearing, not a rough guess. The layer has to be
+  oversized or the pull drags an empty edge into view — but the overhang must be a
+  WHOLE multiple of the cell size, because the background tiles start at the
+  element's own origin. At -128px (two cells) the lines still fall on exact
+  multiples of 64 in viewport coordinates (-128, -64, 0, 64 …), which is what makes
+  the snapping arithmetic valid. An arbitrary overhang like -8% would put them at
+  an unpredictable offset and the dots would sit beside the lines, not on them.
+
+  Two cells rather than one so the pull can be big enough to actually notice.
+*/
+.amb-grid {
+  position: absolute;
+  inset: -128px;
+  will-change: translate, opacity;
+  translate: var(--dx, 0px) var(--dy, 0px);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.075) 1px, transparent 1px);
+  background-size: var(--grid, 64px) var(--grid, 64px);
+  /* Generous mask — the grid should read across most of the screen, only easing
+     off at the far corners. */
+  mask-image: radial-gradient(115% 95% at 50% 40%, #000 45%, transparent 100%);
+  animation: amb-grid-breathe 11s ease-in-out infinite;
+}
+
+@keyframes amb-grid-breathe {
+  0%,
+  100% {
+    opacity: 0.62;
+  }
+  50% {
+    opacity: 1;
   }
 }
 
-/* Editorial display type. */
+/*
+  Cursor effects on the grid. Both are positioned only by `translate`, so moving
+  them is a compositor job — no full-screen repaint per frame.
+*/
+.amb-nodes,
+.amb-cursor-glow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  will-change: translate, opacity;
+  transition: opacity 400ms ease;
+}
+
+.amb-nodes.is-live,
+.amb-cursor-glow.is-live {
+  opacity: 1;
+}
+
+/*
+  The grid's own intersections lighting up. Nothing is drawn on top of the page —
+  this layer is a field of small accent dots sitting exactly on the grid's corner
+  points, radially masked so only the ones near the pointer show.
+
+  Two pieces of arithmetic keep the dots on the intersections:
+
+  · The tile is shifted back by half a cell. A radial-gradient centres itself in
+    its tile, so an unshifted pattern would put dots in the middle of each cell;
+    offsetting by -50% moves them onto the corners (0, 64, 128 …).
+
+  · The layer is 8 cells square — an EVEN count on purpose. Its centre is then
+    4 cells in, a whole multiple of the cell size, so PointerEffects.js can centre
+    it on a snapped intersection without knocking the pattern out of alignment.
+    An odd span would put the centre on a half-cell and misalign every dot.
+*/
+.amb-nodes {
+  width: calc(var(--grid, 64px) * 8);
+  height: calc(var(--grid, 64px) * 8);
+  translate: var(--nx, -2000px) var(--ny, -2000px);
+  /* Solid core plus a soft halo, so each node reads as a lit point rather than a
+     flat dot. */
+  background-image: radial-gradient(
+    circle,
+    rgb(224, 125, 82) 2.2px,
+    rgba(224, 125, 82, 0.35) 3.6px,
+    transparent 5.5px
+  );
+  background-size: var(--grid, 64px) var(--grid, 64px);
+  background-position: calc(var(--grid, 64px) * -0.5)
+    calc(var(--grid, 64px) * -0.5);
+  /* Brightest at the centre, gone by the edge. */
+  mask-image: radial-gradient(
+    circle closest-side,
+    #000 0%,
+    rgba(0, 0, 0, 0.6) 40%,
+    transparent 78%
+  );
+  transition:
+    translate 110ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 400ms ease;
+}
+
+/* Warm wash around the pointer, so the grid nearby is clearly brighter. */
+.amb-cursor-glow {
+  width: 30rem;
+  height: 30rem;
+  margin: -15rem 0 0 -15rem;
+  border-radius: 9999px;
+  translate: var(--gx, -600px) var(--gy, -600px);
+  background: radial-gradient(
+    circle,
+    rgba(224, 125, 82, 0.16),
+    rgba(224, 125, 82, 0.05) 40%,
+    transparent 68%
+  );
+}
+
+/* ---------------------------------------------------------------------------
+   Pointer treatment: nothing is drawn on the cursor. Cards tip in perspective
+   toward it instead — the UI reacts, not the pointer. Tilt.js sets --tilt-x and
+   --tilt-y as the pointer crosses anything marked [data-tilt].
+   --------------------------------------------------------------------------- */
+
+[data-tilt] {
+  /*
+    Uses the `transform` shorthand on purpose. Tailwind v4 applies its own
+    transform utilities via the individual `scale` / `translate` / `rotate`
+    properties, so a card can keep its hover:scale and this tilt at the same time
+    without either clobbering the other.
+  */
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  /* Springs back when the pointer leaves. */
+  transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* While actively tracking, a long transition would feel like lag — shorten it to
+   just enough to smooth the per-frame steps. The slight lift makes it obvious
+   which card the pointer has hold of. */
+[data-tilt].is-tilting {
+  transition:
+    transform 90ms linear,
+    scale 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  scale: 1.02;
+  will-change: transform;
+  z-index: 2;
+}
+
+/* Dot grid used per-section. Spacing and alpha are our own. */
+.bg-dot-pattern {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 28px 28px;
+}
+
+/* Display type — Space Grotesk. Sets ONLY font-family: this rule is unlayered,
+   so declaring letter-spacing here would beat Tailwind's tracking-* utilities
+   and pin every heading to one value. Spacing is chosen per-heading. */
 .font-display {
-  font-family: var(--font-serif);
-  font-optical-sizing: auto;
-  letter-spacing: -0.02em;
+  font-family: var(--font-space);
 }
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Hand-drawn underline used to mark emphasis in headlines. */
+/* Emphasis device: an accent underline behind a phrase in a headline. */
 .markline {
   background-image: linear-gradient(var(--accent), var(--accent));
   background-repeat: no-repeat;
   background-position: 0 92%;
-  background-size: 100% 0.14em;
+  background-size: 100% 0.12em;
   padding-bottom: 0.02em;
 }
 
-/* Lightweight, CSS-only entrance motion (respects reduced-motion). */
+/* ---------------------------------------------------------------------------
+   Motion — all CSS, no animation library.
+   --------------------------------------------------------------------------- */
+
+/*
+  Entrance motion uses the independent `translate` property, NOT
+  `transform: translateY()`.
+
+  These animations run with `animation-fill-mode: both`, and an animation's value
+  sits above normal declarations in the cascade — so a finished `rise` would keep
+  `transform: translateY(0)` pinned to the element forever. On a card that also
+  carries [data-tilt] that silently beat the tilt's `transform`, leaving every
+  card flat (computed transform stuck at a 2D identity matrix). Keeping entrances
+  on `translate` leaves `transform` free for the tilt.
+*/
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    translate: 0 18px;
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    translate: 0 0;
   }
 }
 
@@ -169,34 +353,304 @@ body::before {
   animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
+.reveal {
+  opacity: 0;
+  translate: 0 18px;
+}
+
+.reveal.is-visible {
+  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Children stagger in after their parent .reveal becomes visible. Set
+   --stagger-index on each child. */
+.reveal-child {
+  opacity: 0;
+  translate: 0 18px;
+}
+
+.reveal.is-visible .reveal-child {
+  animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--stagger-index, 0) * 90ms);
+}
+
+@keyframes caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  55%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  animation: caret-blink 1.1s steps(1, end) infinite;
+}
+
+/* Flip card — hover or keyboard focus turns it over. */
+.flip-card {
+  perspective: 1100px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.32, 0.72, 0.24, 1);
+}
+
+.flip-card:hover .flip-card-inner,
+.flip-card:focus-visible .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-card-front {
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/*
+  Start-up loader, shown once per browser session before the page.
+  Timing lives in IntroOverlay.js; this is just the presentation.
+*/
+html[data-intro="done"] .intro-overlay {
+  display: none;
+}
+
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  /* Flex column, not grid: the name and the readout beneath it need to stack. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 1.5rem;
+  background: var(--background);
+  transition:
+    transform 450ms cubic-bezier(0.7, 0, 0.3, 1),
+    opacity 450ms ease,
+    visibility 450ms ease;
+}
+
+.intro-overlay.is-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/*
+  Liquid fill + counter. Two identical copies of the name stack exactly on top of
+  each other: the lower one stroke-only, the upper one solid and clipped from the
+  bottom, so accent rises through the letterforms.
+
+  The clip level and the percentage below both come from one piece of state in
+  IntroOverlay.js, so the readout always matches the liquid exactly. Only the
+  colour change and the panel fade are CSS — the level itself is set inline.
+*/
+.intro-name {
+  position: relative;
+  display: inline-block;
+}
+
+/* The readout under the name. */
+.intro-count {
+  margin-top: 1.6rem;
+  font-family: var(--font-mono);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #ffffff;
+}
+
+/*
+  Fixed width and right-aligned so the digits grow leftward into reserved space.
+  Left to itself the group would widen from "0%" to "100%" and re-centre on every
+  step, dragging the whole readout sideways as it counted.
+*/
+.intro-count-num {
+  display: inline-block;
+  min-width: 3ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Every metric that affects glyph position lives here, so both layers render
+   identically and the fill lands exactly on the outline. */
+.intro-name-layer {
+  display: block;
+  white-space: nowrap;
+  font-family: var(--font-space);
+  font-size: clamp(2rem, 10.5vw, 7.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  /* Slack so a clip edge never shaves the stroke off the outer glyphs;
+     inset() rejects negative offsets, so it has to come from the box. */
+  padding: 0.06em 0.08em;
+}
+
+.intro-name-outline {
+  color: transparent;
+  /* Longhands, not the `-webkit-text-stroke` shorthand: the shorthand silently
+     fails to parse with a var() colour in some engines, leaving the outline
+     invisible (computed width 0). */
+  -webkit-text-stroke-width: 1.5px;
+  -webkit-text-stroke-color: var(--accent);
+  animation: intro-appear 320ms ease both;
+}
+
+/* The clip level is set inline from the same state as the counter; only the
+   colour is CSS. */
+.intro-name-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  transition: color 320ms ease;
+}
+
+/* At 100% the accent inks over to white — the colour the name is in the hero, so
+   the handover feels continuous. */
+.intro-name.is-full .intro-name-fill {
+  color: #ffffff;
+}
+
+@keyframes intro-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Must come after the rules above — same specificity, so source order decides
+   the winner for reduced-motion users. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .rise {
+  .rise,
+  .reveal.is-visible,
+  .reveal.is-visible .reveal-child {
     animation: none;
+  }
+  .reveal,
+  .reveal-child {
+    opacity: 1;
+    translate: none;
+  }
+  .caret {
+    animation: none;
+  }
+  .flip-card-inner {
+    transition: none;
+  }
+  .intro-overlay {
+    display: none;
+  }
+  /* The grid stops breathing and settles at full strength; the static glow stays,
+     so the page keeps its depth without anything in motion. */
+  .amb-grid {
+    animation: none;
+    opacity: 0.85;
+  }
+  .amb-nodes,
+  .amb-cursor-glow {
+    display: none;
+  }
+  /* Tilt is also gated in JS, but reset here so nothing is left rotated. */
+  [data-tilt] {
+    transform: none;
+    transition: none;
+    scale: 1;
+  }
+}
+
+/* Touch devices have no hovering pointer to react to. Tilt is gated in JS. */
+@media (hover: none), (pointer: coarse) {
+  .amb-nodes,
+  .amb-cursor-glow {
+    display: none;
   }
 }
 
 /*
   Résumé print styles — a clean, one-page black-on-white PDF via the browser's
-  "Save as PDF". Colors are forced regardless of the active light/dark theme so
-  the printout is always legible.
+  "Save as PDF". Colors are forced to ink-on-paper regardless of the dark screen
+  theme, so the printout is always legible.
 */
 @media print {
-  body::before {
+  /*
+    The loader and ambient layers are fixed and full-bleed. The loader fades out
+    a few seconds after load and then removes itself, but printing before that
+    lands a ghost title card in the middle of the page — so it must be hidden
+    outright for print, not just faded.
+  */
+  .intro-overlay,
+  .amb,
+  .bg-dot-pattern {
     display: none !important;
+  }
+  [data-tilt] {
+    transform: none !important;
+  }
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
   }
   .resume {
     max-width: 100% !important;
     padding: 0 !important;
     color: #000 !important;
   }
-  .resume .text-muted {
-    color: #222 !important;
+  /*
+    Safety net. Every text node on the résumé already carries an explicit
+    print: variant, but a future edit shouldn't be able to put near-white text
+    on white paper. Selectors are ordered by rising specificity so headings stay
+    black and eyebrows stay grey even though the blanket rule matches them too:
+      .resume [class*=…]      0,2,0
+      .resume h1[class]       0,2,1
+      .resume .eyebrow[class] 0,3,0
+  */
+  .resume [class*="text-neutral-"],
+  .resume [class*="text-white"],
+  .resume [class*="text-muted"],
+  .resume [class*="text-faint"],
+  .resume [class*="text-accent"] {
+    color: #262626 !important;
   }
-  .resume .text-faint,
-  .resume .text-accent {
+  .resume h1[class],
+  .resume h2[class],
+  .resume h3[class] {
+    color: #000 !important;
+  }
+  .resume .eyebrow[class] {
     color: #555 !important;
   }
   .resume a {

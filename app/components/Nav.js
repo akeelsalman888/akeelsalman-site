@@ -1,70 +1,135 @@
 "use client";
 
-import { useState } from "react";
-import { site } from "../content";
-import ThemeToggle from "./ThemeToggle";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
+// `id` is the homepage section this link targets — null for real routes, which
+// are excluded from the scroll-spy.
 const links = [
-  { href: "#services", label: "Services" },
-  { href: "#skills", label: "Toolkit" },
-  { href: "#projects", label: "Work" },
-  { href: "#about", label: "About" },
-  { href: "/resume", label: "Résumé" },
-  { href: "#contact", label: "Contact" },
+  { id: "services", label: "Services" },
+  { id: "skills", label: "Toolkit" },
+  { id: "projects", label: "Work" },
+  { id: "about", label: "About" },
+  { id: null, href: "/resume", label: "Résumé" },
+  { id: "contact", label: "Contact" },
 ];
 
 export default function Nav() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState("");
+
+  // Hash links only resolve to a section when we're actually on the homepage;
+  // from the case study or résumé page they need to navigate home first.
+  const hrefFor = (l) => l.href ?? (isHome ? `#${l.id}` : `/#${l.id}`);
+
+  // Scroll state drives the header's translucent backdrop, plus which pill is lit.
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 30);
+
+      if (!isHome) return;
+      // Probe a little below the nav so a section counts as active once its
+      // heading has cleared the header.
+      const probe = window.scrollY + 140;
+      let current = "";
+      for (const l of links) {
+        if (!l.id) continue;
+        const el = document.getElementById(l.id);
+        if (!el) continue;
+        if (probe >= el.offsetTop && probe < el.offsetTop + el.offsetHeight) {
+          current = l.id;
+          break;
+        }
+      }
+      setActive(current);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [isHome]);
+
+  // Lock the page behind the fullscreen mobile menu, and let Escape close it.
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/70 backdrop-blur-md">
-      <nav className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-6">
+    <>
+      <header
+        className={`fixed inset-x-0 top-0 z-50 flex items-center justify-end px-6 py-4 transition-all duration-500 md:justify-between md:px-10 ${
+          scrolled
+            ? "border-b border-white/5 bg-black/40 backdrop-blur-xl md:border-b-0 md:bg-transparent md:backdrop-blur-none"
+            : "border-b border-transparent bg-transparent"
+        }`}
+      >
+        {/*
+          Wordmark on the left, links on the right. The reference runs a single
+          anonymous pill centred in the viewport with no logo at all — for someone
+          being hired, having the name permanently on screen is worth more than
+          the symmetry.
+        */}
         <a
-          href="#top"
-          className="font-display text-lg font-semibold tracking-tight"
-          onClick={() => setOpen(false)}
+          href={isHome ? "#top" : "/"}
+          className="hidden font-display text-sm font-black uppercase tracking-[0.18em] text-white transition-colors duration-300 hover:text-accent md:block"
         >
-          {site.name}
+          Akeel<span className="text-accent">.</span>
         </a>
 
-        <div className="flex items-center gap-2 sm:gap-6">
-        {/* Desktop links */}
-        <ul className="hidden items-center gap-9 sm:flex">
-          {links.map((l) => (
-            <li key={l.href}>
+        <nav
+          aria-label="Main"
+          className="hidden items-center rounded-full border border-white/10 bg-surface/70 p-1 shadow-[0_18px_40px_rgba(0,0,0,0.55)] backdrop-blur-xl md:flex"
+        >
+          {links.map((l) => {
+            const isActive = Boolean(l.id) && active === l.id;
+            return (
               <a
-                href={l.href}
-                className="text-sm text-muted transition-colors hover:text-accent"
+                key={l.label}
+                href={hrefFor(l)}
+                aria-current={isActive ? "true" : undefined}
+                className={`relative rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors duration-300 ${
+                  isActive ? "text-accent" : "text-neutral-400 hover:text-white"
+                }`}
               >
-                {l.label}
+                {isActive && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 rounded-full border border-accent/30 bg-accent/10"
+                  />
+                )}
+                <span className="relative z-10">{l.label}</span>
               </a>
-            </li>
-          ))}
-        </ul>
+            );
+          })}
+        </nav>
 
-        {/* Desktop "available" pill */}
-        <a
-          href="#contact"
-          className="group hidden items-center gap-1.5 text-sm font-medium text-foreground sm:inline-flex"
-        >
-          <span className="markline">Available for work</span>
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-          </span>
-        </a>
-
-        {/* Theme toggle — visible on all sizes */}
-        <ThemeToggle />
-
-        {/* Mobile menu toggle */}
+        {/* Mobile: hamburger only — the links live in the overlay below. */}
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? "Close menu" : "Open menu"}
-          className="-mr-2 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-foreground sm:hidden"
+          className="relative z-50 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors duration-300 hover:bg-white/10 md:hidden"
         >
           <svg
             viewBox="0 0 24 24"
@@ -72,7 +137,7 @@ export default function Nav() {
             stroke="currentColor"
             strokeWidth="1.8"
             strokeLinecap="round"
-            className="h-6 w-6"
+            className="h-5 w-5"
             aria-hidden="true"
           >
             {open ? (
@@ -86,43 +151,37 @@ export default function Nav() {
             )}
           </svg>
         </button>
-        </div>
-      </nav>
+      </header>
 
-      {/* Mobile dropdown panel */}
+      {/* Fullscreen mobile menu. */}
       {open && (
         <div
           id="mobile-menu"
-          className="border-t bg-background/95 backdrop-blur-md sm:hidden"
+          className="fixed inset-x-0 top-0 z-40 flex h-screen flex-col justify-center bg-black/95 px-8 backdrop-blur-2xl md:hidden"
         >
-          <ul className="mx-auto flex w-full max-w-5xl flex-col px-6 py-2">
-            {links.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className="block border-b py-4 text-base text-muted transition-colors last:border-b-0 hover:text-accent"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
-            <li>
+          <nav aria-label="Mobile" className="flex flex-col">
+            {links.map((l, i) => (
               <a
-                href="#contact"
+                key={l.label}
+                href={hrefFor(l)}
                 onClick={() => setOpen(false)}
-                className="mt-2 mb-3 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-ink"
+                style={{ animationDelay: `${i * 60}ms` }}
+                className="rise border-b border-white/5 py-5 font-display text-3xl font-extrabold uppercase tracking-tight text-neutral-300 transition-colors hover:text-white"
               >
-                Available for work
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-ink opacity-50" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-accent-ink" />
-                </span>
+                {l.label}
               </a>
-            </li>
-          </ul>
+            ))}
+          </nav>
+          <a
+            href={isHome ? "#contact" : "/#contact"}
+            onClick={() => setOpen(false)}
+            className="mt-10 inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-4 text-xs font-bold uppercase tracking-wider text-accent-ink"
+          >
+            Start a project
+            <span aria-hidden>→</span>
+          </a>
         </div>
       )}
-    </header>
+    </>
   );
 }

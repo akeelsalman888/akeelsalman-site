@@ -3,8 +3,10 @@
 import { useState } from "react";
 
 const FIELD =
-  "w-full rounded-lg border bg-surface px-4 py-3 text-foreground placeholder:text-faint transition-colors focus:border-accent focus:outline-none";
-const LABEL = "eyebrow mb-2 block text-faint";
+  "w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-neutral-600 transition-colors duration-300 hover:border-white/20 focus:border-white/40 focus:outline-none";
+const LABEL = "eyebrow mb-2 block text-neutral-500";
+const CARD =
+  "rounded-2xl border border-white/10 bg-surface/80 p-6 shadow-[0_40px_100px_rgba(0,0,0,0.6)] md:p-8";
 
 export default function ContactForm() {
   const [status, setStatus] = useState("idle"); // idle | sending | success | error
@@ -48,11 +50,17 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="mt-10 max-w-xl rounded-xl border bg-surface p-8">
-        <p className="font-display text-2xl font-medium tracking-tight text-accent">
+      <div className={`${CARD} flex flex-col items-start justify-center`}>
+        <span
+          aria-hidden="true"
+          className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-xl text-white"
+        >
+          ✓
+        </span>
+        <p className="font-display text-2xl font-extrabold tracking-tight text-white">
           Message sent — thank you.
         </p>
-        <p className="mt-3 leading-relaxed text-muted">
+        <p className="mt-3 text-sm leading-relaxed text-neutral-400">
           I&apos;ve got it and I&apos;ll reply personally, usually within 24
           hours.
         </p>
@@ -61,7 +69,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="mt-10 max-w-xl">
+    <form onSubmit={handleSubmit} noValidate className={CARD}>
       {/* Honeypot — hidden from humans, catches bots. */}
       <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
         <label>
@@ -69,6 +77,8 @@ export default function ContactForm() {
           <input type="text" name="company" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
+
+      <p className="eyebrow mb-6 text-neutral-500">Start a project</p>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
@@ -119,7 +129,10 @@ export default function ContactForm() {
       </div>
 
       {status === "error" && (
-        <p role="alert" className="mt-4 text-sm text-accent">
+        <p
+          role="alert"
+          className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+        >
           {error}
         </p>
       )}
@@ -128,12 +141,18 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-ink transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+          className="group inline-flex cursor-pointer items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-accent-ink shadow-md shadow-accent/20 transition-all duration-300 hover:scale-[1.03] hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
         >
           {status === "sending" ? "Sending…" : "Send message"}
-          {status !== "sending" && <span aria-hidden>→</span>}
+          {status !== "sending" && (
+            <span aria-hidden className="transition-transform group-hover:translate-x-1">
+              →
+            </span>
+          )}
         </button>
-        <p className="text-sm text-faint">I reply within 24 hours.</p>
+        <p className="font-mono text-[11px] text-neutral-500">
+          I reply within 24 hours.
+        </p>
       </div>
     </form>
   );

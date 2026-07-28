@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { site } from "./content";
 
 // Social share card (LinkedIn / WhatsApp / iMessage / Twitter previews).
-// Generated at build with next/og — matches the site's warm editorial theme.
+// Generated at build with next/og — matches the site theme.
 export const alt = `${site.name} — ${site.title}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -18,19 +18,19 @@ export default function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 80,
-          backgroundColor: "#faf7f1",
-          color: "#211d18",
+          backgroundColor: "#0a0b0e",
+          color: "#ffffff",
           fontFamily: "sans-serif",
         }}
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
-              fontSize: 26,
-              letterSpacing: "0.22em",
+              fontSize: 24,
+              letterSpacing: "0.28em",
               textTransform: "uppercase",
-              color: "#bd4f2c",
-              fontWeight: 600,
+              color: "#e07d52",
+              fontWeight: 700,
             }}
           >
             {site.title}
@@ -40,8 +40,8 @@ export default function OpengraphImage() {
               display: "flex",
               marginTop: 24,
               width: 96,
-              height: 12,
-              backgroundColor: "#bd4f2c",
+              height: 6,
+              backgroundColor: "#e07d52",
               borderRadius: 3,
             }}
           />
@@ -50,10 +50,11 @@ export default function OpengraphImage() {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div
             style={{
-              fontSize: 128,
-              fontWeight: 800,
-              letterSpacing: "-0.03em",
+              fontSize: 132,
+              fontWeight: 900,
+              letterSpacing: "-0.045em",
               lineHeight: 1,
+              textTransform: "uppercase",
             }}
           >
             {site.name}
@@ -61,9 +62,9 @@ export default function OpengraphImage() {
           <div
             style={{
               marginTop: 32,
-              fontSize: 36,
-              lineHeight: 1.3,
-              color: "#6f665a",
+              fontSize: 34,
+              lineHeight: 1.35,
+              color: "#a3a3a3",
               maxWidth: 940,
             }}
           >
@@ -76,8 +77,8 @@ export default function OpengraphImage() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            fontSize: 26,
-            color: "#9a9084",
+            fontSize: 24,
+            color: "#74757e",
           }}
         >
           <div style={{ display: "flex" }}>akeelsalman.com</div>

@@ -40,6 +40,10 @@ export const projects = [
     description:
       "A bilingual (English/Arabic, full RTL) website serving an Islamic community center of 300+ families — with prayer times, events, online donations, and service applications. Built solo with React and a serverless backend, with an automated test suite that checks every page across languages and screen sizes before each release.",
     tech: ["React", "Vite", "Google Apps Script", "Playwright", "i18n/RTL"],
+    // No screenshot captured yet — the card falls back to a labelled browser
+    // frame showing the live domain. Drop a file in /public/work/ and set this
+    // to its path to show a real preview instead.
+    image: null,
   },
   {
     name: "Iman Connect",
@@ -51,6 +55,8 @@ export const projects = [
     // but the case study below has approved, sanitized screenshots.
     private: true,
     caseStudyUrl: "/work/iman-connect",
+    image: "/work/iman-connect/dashboard.png",
+    imageAlt: "The Iman Connect board dashboard",
   },
 ];
 
@@ -58,7 +64,7 @@ export const projects = [
 export const skills = [
   {
     group: "Languages",
-    items: ["JavaScript", "SQL", "Python"],
+    items: ["JavaScript", "Java", "Python", "SQL"],
   },
   {
     group: "Frontend",

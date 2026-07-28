@@ -105,7 +105,7 @@ export default function ScreenshotGallery({ shots }) {
               <button
                 type="button"
                 onClick={() => setActiveIndex(i)}
-                className="group relative block w-full cursor-pointer overflow-hidden rounded-xl border shadow-sm"
+                className="group relative block w-full cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-surface-2 shadow-lg transition-all duration-300 hover:border-white/30"
                 aria-label={`View larger: ${s.alt}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -118,15 +118,15 @@ export default function ScreenshotGallery({ shots }) {
               </button>
             ) : (
               <div
-                className="flex aspect-[16/10] w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed bg-surface px-6 text-center"
+                className="flex aspect-[16/10] w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-white/10 bg-surface-2 px-6 text-center"
                 role="img"
                 aria-label={`Screenshot placeholder: ${s.alt}`}
               >
-                <ImageGlyph className="h-8 w-8 text-faint" />
-                <span className="eyebrow text-faint">Screenshot to add</span>
+                <ImageGlyph className="h-8 w-8 text-neutral-600" />
+                <span className="eyebrow text-neutral-600">Screenshot to add</span>
               </div>
             )}
-            <figcaption className="text-sm leading-relaxed text-faint">
+            <figcaption className="text-sm leading-relaxed text-neutral-500">
               {s.caption}
             </figcaption>
           </figure>
@@ -136,7 +136,7 @@ export default function ScreenshotGallery({ shots }) {
       {isOpen &&
         createPortal(
           <div
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90 p-4 sm:p-8"
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/95 p-4 backdrop-blur-2xl sm:p-8"
             role="dialog"
             aria-modal="true"
             aria-label={active.alt}
@@ -146,7 +146,7 @@ export default function ScreenshotGallery({ shots }) {
               type="button"
               onClick={close}
               aria-label="Close"
-              className="absolute right-4 top-4 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-red-600/90 text-white transition-colors hover:bg-red-600"
+              className="absolute right-4 top-4 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition-colors hover:bg-accent hover:text-accent-ink"
             >
               <CloseIcon className="h-5 w-5" />
             </button>

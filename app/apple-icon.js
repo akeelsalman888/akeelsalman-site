@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-// Apple touch icon — "A" monogram on terracotta accent.
+// Apple touch icon — white "A" monogram on the site's near-black canvas.
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
@@ -14,10 +14,10 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#bd4f2c",
-          color: "#ffffff",
+          backgroundColor: "#0a0b0e",
+          color: "#e07d52",
           fontSize: 120,
-          fontWeight: 700,
+          fontWeight: 900,
         }}
       >
         A

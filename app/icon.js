@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-// Branded favicon — "A" monogram on terracotta accent.
+// Branded favicon — white "A" monogram on the site's near-black canvas.
 export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
 
@@ -14,10 +14,10 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#bd4f2c",
-          color: "#ffffff",
+          backgroundColor: "#0a0b0e",
+          color: "#e07d52",
           fontSize: 46,
-          fontWeight: 700,
+          fontWeight: 900,
         }}
       >
         A

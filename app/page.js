@@ -30,17 +30,23 @@ export default function Home() {
       />
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-5 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-ink"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-5 focus:py-2 focus:text-sm focus:font-bold focus:text-accent-ink"
       >
         Skip to content
       </a>
       <Nav />
+      {/*
+        Work leads. The reference site this design started from ran
+        services → toolkit → work; putting shipped projects first is both a
+        different skeleton and the better order for someone being evaluated —
+        the strongest evidence shouldn't sit third.
+      */}
       <main id="main" className="flex-1">
         <Hero />
-        <Services />
-        <Skills />
         <Projects />
+        <Services />
         <About />
+        <Skills />
         <Testimonials />
         <Contact />
       </main>

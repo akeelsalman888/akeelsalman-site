@@ -1,12 +1,16 @@
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { site } from "./content";
+import IntroOverlay from "./components/IntroOverlay";
+import Ambience from "./components/Ambience";
+import PointerEffects from "./components/PointerEffects";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+// Display / body split rather than one face doing both: Space Grotesk's
+// slightly mechanical letterforms carry the headings, Inter handles running text
+// where Grotesk's quirks would get tiring.
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["SOFT", "WONK", "opsz"],
 });
 
 const inter = Inter({
@@ -46,21 +50,43 @@ export const metadata = {
   },
 };
 
-// Runs before paint so the saved theme is applied with no flash of the wrong
-// colors. Only an explicit choice sets data-theme; otherwise CSS follows the OS.
-const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
+// Dark-only site — tells the browser to render form controls, scrollbars and the
+// mobile URL bar in dark chrome to match.
+export const viewport = {
+  colorScheme: "dark",
+  themeColor: "#0a0b0e",
+};
+
+// Runs before paint so a repeat load within the same browser session skips
+// the intro overlay instantly instead of flashing it and then removing it.
+const introScript = `(function(){try{if(sessionStorage.getItem('introShown')){document.documentElement.setAttribute('data-intro','done');}}catch(e){}})();`;
 
 export default function RootLayout({ children }) {
+  // suppressHydrationWarning on <html>: introScript sets data-intro before React
+  // hydrates, so the server and client markup differ there by design.
   return (
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: introScript }} />
+        <noscript>
+          {/* Without JS the IntersectionObserver never adds .is-visible, so the
+              reveal resting state would hide everything. Resets `translate` (not
+              `transform`) because that is the property the entrances animate. */}
+          <style>
+            {".reveal,.reveal-child{opacity:1 !important;translate:none !important;}"}
+          </style>
+        </noscript>
       </head>
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <IntroOverlay />
+        <Ambience />
+        <PointerEffects />
+        {children}
+      </body>
     </html>
   );
 }

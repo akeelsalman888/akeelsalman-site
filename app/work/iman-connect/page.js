@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Nav from "../../components/Nav";
 import Footer from "../../components/Footer";
+import Reveal from "../../components/Reveal";
 import { site, testimonials } from "../../content";
 import ScreenshotGallery from "./ScreenshotGallery";
 
@@ -41,6 +42,25 @@ const flow = [
   {
     title: "Notify",
     body: "The requester is notified of the outcome, closing the loop.",
+  },
+];
+
+// The three core systems inside the portal.
+const systems = [
+  {
+    tag: "IPAS",
+    title: "Purchase Approval System",
+    body: "Carries a purchase request from the moment it's submitted to a filed decision: the finance committee is alerted, reviews it inside the portal, and the requester is told the outcome.",
+  },
+  {
+    tag: "IPRS",
+    title: "Purchase Reimbursement System",
+    body: "Runs the same disciplined path for reimbursements — request, review, decision, record — so money owed back to members is tracked as carefully as money going out.",
+  },
+  {
+    tag: "Student Payments",
+    title: "Program Payment Tracker",
+    body: "A simple paid/unpaid ledger for the center's Quran, daycare, and weekend school programs — cash and digital payments logged in one place instead of scattered notes.",
   },
 ];
 
@@ -98,6 +118,37 @@ const shots = [
   },
 ];
 
+// Shared shell for each numbered section below.
+function Chapter({ index, kicker, title, intro, children, className = "" }) {
+  return (
+    <Reveal
+      as="section"
+      className={`relative overflow-hidden border-t border-white/5 ${className}`}
+    >
+      <div
+        aria-hidden="true"
+        className="bg-dot-pattern pointer-events-none absolute inset-0 opacity-25"
+      />
+      <div className="relative z-10 mx-auto w-full max-w-5xl px-6 py-14 sm:px-8 sm:py-20">
+        <span className="eyebrow flex items-center gap-2 text-neutral-500">
+          <span className="text-neutral-600">{index}</span>
+          <span aria-hidden>·</span>
+          {kicker}
+        </span>
+        <h2 className="mt-4 max-w-3xl font-display text-3xl font-black tracking-tight text-white sm:text-4xl">
+          {title}
+        </h2>
+        {intro && (
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-neutral-400 sm:text-base">
+            {intro}
+          </p>
+        )}
+        {children}
+      </div>
+    </Reveal>
+  );
+}
+
 export default function ImanConnectCaseStudy() {
   const testimonial = testimonials.find((t) => t.name === "Hamza Sindi");
 
@@ -105,7 +156,7 @@ export default function ImanConnectCaseStudy() {
     <>
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-5 focus:py-2 focus:text-sm focus:font-medium focus:text-accent-ink"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-5 focus:py-2 focus:text-sm focus:font-bold focus:text-accent-ink"
       >
         Skip to content
       </a>
@@ -113,213 +164,247 @@ export default function ImanConnectCaseStudy() {
 
       <main id="main" className="flex-1">
         {/* Hero */}
-        <header className="mx-auto w-full max-w-5xl px-6 pt-14 pb-4 sm:pt-20">
-          <Link
-            href="/#projects"
-            className="text-sm text-muted transition-colors hover:text-accent"
-          >
-            ← Back to work
-          </Link>
+        <header className="relative overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="bg-dot-pattern pointer-events-none absolute inset-0 opacity-40"
+          />
 
-          <div className="mt-10 flex items-baseline gap-4">
-            <span className="eyebrow text-accent">Case study</span>
-            <span className="eyebrow text-faint">Internal operations tool</span>
+          <div className="relative z-10 mx-auto w-full max-w-5xl px-6 pb-6 pt-28 sm:px-8 sm:pt-36">
+            <Link
+              href="/#projects"
+              className="rise font-mono text-xs uppercase tracking-wider text-neutral-400 transition-colors hover:text-white"
+            >
+              ← Back to work
+            </Link>
+
+            <div
+              className="rise mt-10 flex flex-wrap items-center gap-3"
+              style={{ animationDelay: "80ms" }}
+            >
+              <span className="eyebrow rounded border border-white/10 bg-white/5 px-2.5 py-1 text-neutral-300">
+                Case study
+              </span>
+              <span className="eyebrow text-neutral-500">
+                Internal operations tool
+              </span>
+            </div>
+
+            <h1
+              className="rise mt-5 font-display text-5xl font-black uppercase leading-none tracking-tighter text-white sm:text-7xl"
+              style={{ animationDelay: "140ms" }}
+            >
+              Iman Connect
+            </h1>
+
+            <p
+              className="rise mt-6 max-w-2xl text-sm leading-relaxed text-neutral-400 sm:text-base"
+              style={{ animationDelay: "200ms" }}
+            >
+              An SSO-gated operations portal that carries a community
+              center&apos;s purchase approvals and reimbursements from request to
+              record, tracks program payments, and gives its board a live view of
+              donations — all behind one secure login.
+            </p>
+
+            {/* Meta grid */}
+            <dl
+              className="rise mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4"
+              style={{ animationDelay: "260ms" }}
+            >
+              {meta.map((m) => (
+                <div
+                  key={m.label}
+                  className="rounded-xl border border-white/10 bg-surface/80 p-4"
+                >
+                  <dt className="eyebrow text-neutral-600">{m.label}</dt>
+                  <dd className="mt-2 text-sm leading-snug text-neutral-200">
+                    {m.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </div>
-          <h1 className="mt-3 font-display text-4xl font-medium tracking-tight sm:text-5xl">
-            Iman Connect
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">
-            An SSO-gated operations portal that carries a community center's
-            purchase approvals and reimbursements from request to record,
-            tracks program payments, and gives its board a live view of
-            donations — all behind one secure login.
-          </p>
-
-          {/* Meta grid */}
-          <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6 border-t pt-8 sm:grid-cols-4">
-            {meta.map((m) => (
-              <div key={m.label}>
-                <dt className="eyebrow text-faint">{m.label}</dt>
-                <dd className="mt-2 text-sm leading-relaxed text-foreground">
-                  {m.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
         </header>
 
         {/* The problem */}
-        <section className="mx-auto w-full max-w-5xl px-6 py-14 sm:py-20">
-          <span className="eyebrow text-accent">01 · The problem</span>
-          <div className="mt-6 grid gap-x-10 gap-y-6 md:grid-cols-[16rem_1fr]">
-            <h2 className="font-display text-2xl font-medium tracking-tight sm:text-3xl">
-              A growing board, no shared system for money
-            </h2>
-            <div className="max-w-2xl leading-relaxed text-muted">
-              <p>
-                Iman Islamic Center serves 300+ families. As it grew, its board
-                needed a dependable way to handle money decisions — purchase
-                requests and reimbursements — that didn't live in scattered
-                emails, group chats, and hallway conversations.
-              </p>
-              <p className="mt-4">
-                There was no single place to see what had been requested, what
-                was approved, and what was still open. Decisions were hard to
-                trace, and no one had a shared, up-to-date picture of the
-                center's giving. The board needed structure — without the cost
-                and overhead of enterprise software.
-              </p>
-            </div>
+        <Chapter
+          index="01"
+          kicker="The problem"
+          title="A growing board, no shared system for money"
+        >
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            <p className="text-sm leading-relaxed text-neutral-400 sm:text-base">
+              Iman Islamic Center serves 300+ families. As it grew, its board
+              needed a dependable way to handle money decisions — purchase
+              requests and reimbursements — that didn&apos;t live in scattered
+              emails, group chats, and hallway conversations.
+            </p>
+            <p className="text-sm leading-relaxed text-neutral-400 sm:text-base">
+              There was no single place to see what had been requested, what was
+              approved, and what was still open. Decisions were hard to trace,
+              and no one had a shared, up-to-date picture of the center&apos;s
+              giving. The board needed structure — without the cost and overhead
+              of enterprise software.
+            </p>
           </div>
-        </section>
+        </Chapter>
 
         {/* What I built */}
-        <section className="mx-auto w-full max-w-5xl border-t px-6 py-14 sm:py-20">
-          <span className="eyebrow text-accent">02 · What I built</span>
-          <h2 className="mt-6 max-w-3xl font-display text-2xl font-medium tracking-tight sm:text-3xl">
-            One portal, two workflows, one source of truth
-          </h2>
-          <p className="mt-4 max-w-2xl leading-relaxed text-muted">
-            I designed and built Iman Connect solo — a single internal portal,
-            gated behind Google SSO, built around three core systems and a
-            live view of the center's donations.
-          </p>
-
+        <Chapter
+          index="02"
+          kicker="What I built"
+          title="One portal, two workflows, one source of truth"
+          intro="I designed and built Iman Connect solo — a single internal portal, gated behind Google SSO, built around three core systems and a live view of the center's donations."
+        >
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
-            <div className="rounded-2xl border bg-surface p-7">
-              <span className="eyebrow text-accent">IPAS</span>
-              <h3 className="mt-2 font-display text-xl font-medium tracking-tight">
-                Purchase Approval System
-              </h3>
-              <p className="mt-3 leading-relaxed text-muted">
-                Carries a purchase request from the moment it's submitted to a
-                filed decision: the finance committee is alerted, reviews it
-                inside the portal, and the requester is told the outcome.
-              </p>
-            </div>
-            <div className="rounded-2xl border bg-surface p-7">
-              <span className="eyebrow text-accent">IPRS</span>
-              <h3 className="mt-2 font-display text-xl font-medium tracking-tight">
-                Purchase Reimbursement System
-              </h3>
-              <p className="mt-3 leading-relaxed text-muted">
-                Runs the same disciplined path for reimbursements — request,
-                review, decision, record — so money owed back to members is
-                tracked as carefully as money going out.
-              </p>
-            </div>
-            <div className="rounded-2xl border bg-surface p-7">
-              <span className="eyebrow text-accent">Student Payments</span>
-              <h3 className="mt-2 font-display text-xl font-medium tracking-tight">
-                Program Payment Tracker
-              </h3>
-              <p className="mt-3 leading-relaxed text-muted">
-                A simple paid/unpaid ledger for the center's Quran, daycare,
-                and weekend school programs — cash and digital payments logged
-                in one place instead of scattered notes.
-              </p>
-            </div>
+            {systems.map((s) => (
+              <div
+                key={s.tag}
+                data-tilt
+                className="group rounded-2xl border border-white/10 bg-surface/80 p-6 shadow-lg transition-all duration-500 hover:border-white/30 hover:bg-surface-2/40 md:p-7"
+              >
+                <span className="eyebrow rounded border border-white/10 bg-white/5 px-2 py-1 text-neutral-300">
+                  {s.tag}
+                </span>
+                <h3 className="mt-4 font-display text-lg font-extrabold tracking-tight text-white">
+                  {s.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-neutral-400">
+                  {s.body}
+                </p>
+              </div>
+            ))}
           </div>
 
-          <p className="mt-6 max-w-2xl leading-relaxed text-muted">
-            Alongside all three, the portal gives the board live visibility
-            into donations — so leadership can see the center's giving at a
-            glance instead of asking for a report.
+          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-neutral-400 sm:text-base">
+            Alongside all three, the portal gives the board live visibility into
+            donations — so leadership can see the center&apos;s giving at a glance
+            instead of asking for a report.
           </p>
-        </section>
+        </Chapter>
 
         {/* How a request flows */}
-        <section className="mx-auto w-full max-w-5xl border-t px-6 py-14 sm:py-20">
-          <span className="eyebrow text-accent">03 · How a request flows</span>
-          <h2 className="mt-6 max-w-3xl font-display text-2xl font-medium tracking-tight sm:text-3xl">
-            From request to record, end to end
-          </h2>
-
-          <ol className="mt-10 grid gap-6 sm:grid-cols-5">
+        <Chapter
+          index="03"
+          kicker="How a request flows"
+          title="From request to record, end to end"
+        >
+          <ol className="mt-10 grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {flow.map((step, i) => (
-              <li key={step.title} className="flex flex-col gap-3">
-                <span className="font-display text-2xl italic text-accent">
+              <li
+                key={step.title}
+                data-tilt
+                className="group relative flex flex-col gap-3 rounded-2xl border border-white/10 bg-surface/80 p-5 transition-all duration-500 hover:border-white/30"
+              >
+                <span
+                  aria-hidden="true"
+                  className="font-mono text-3xl font-black text-neutral-800 opacity-50 transition-opacity duration-300 group-hover:opacity-90"
+                >
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="font-display text-lg font-medium tracking-tight">
+                <h3 className="font-display text-base font-extrabold tracking-tight text-white">
                   {step.title}
                 </h3>
-                <p className="text-sm leading-relaxed text-muted">
+                <p className="text-xs leading-relaxed text-neutral-400">
                   {step.body}
                 </p>
               </li>
             ))}
           </ol>
-        </section>
+        </Chapter>
 
         {/* Inside the portal — screenshots */}
-        <section className="mx-auto w-full max-w-5xl border-t px-6 py-14 sm:py-20">
-          <span className="eyebrow text-accent">04 · Inside the portal</span>
-          <h2 className="mt-6 max-w-3xl font-display text-2xl font-medium tracking-tight sm:text-3xl">
-            A look at the screens
-          </h2>
-          <p className="mt-4 max-w-2xl leading-relaxed text-muted">
-            Iman Connect is a private, SSO-gated system, so these are captured
-            views of the board's real workflow. Tap or click any screenshot to
-            view it larger.
-          </p>
-
+        <Chapter
+          index="04"
+          kicker="Inside the portal"
+          title="A look at the screens"
+          intro="Iman Connect is a private, SSO-gated system, so these are captured views of the board's real workflow. Tap or click any screenshot to view it larger."
+        >
           <ScreenshotGallery shots={shots} />
-        </section>
+        </Chapter>
 
         {/* Technical decisions */}
-        <section className="mx-auto w-full max-w-5xl border-t px-6 py-14 sm:py-20">
-          <span className="eyebrow text-accent">05 · Technical decisions</span>
-          <h2 className="mt-6 max-w-3xl font-display text-2xl font-medium tracking-tight sm:text-3xl">
-            Choices that fit a volunteer-run center
-          </h2>
-
-          <div className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2">
+        <Chapter
+          index="05"
+          kicker="Technical decisions"
+          title="Choices that fit a volunteer-run center"
+        >
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
             {decisions.map((d) => (
-              <div key={d.title}>
-                <h3 className="font-display text-lg font-medium tracking-tight">
+              <div
+                key={d.title}
+                data-tilt
+                className="rounded-2xl border border-white/10 bg-surface/80 p-6 transition-all duration-500 hover:border-white/30 md:p-7"
+              >
+                <h3 className="font-display text-lg font-extrabold tracking-tight text-white">
                   {d.title}
                 </h3>
-                <p className="mt-2 leading-relaxed text-muted">{d.body}</p>
+                <p className="mt-3 text-sm leading-relaxed text-neutral-400">
+                  {d.body}
+                </p>
               </div>
             ))}
           </div>
-        </section>
+        </Chapter>
 
         {/* Outcome — client's own words */}
         {testimonial && (
-          <section className="mx-auto w-full max-w-5xl border-t px-6 py-14 sm:py-20">
-            <span className="eyebrow text-accent">06 · Outcome</span>
-            <figure className="mt-8 max-w-3xl">
-              <blockquote className="font-display text-2xl font-medium leading-snug tracking-tight sm:text-3xl">
-                “{testimonial.quote}”
+          <Chapter index="06" kicker="Outcome" title="In the client's words">
+            <figure className="mt-8 max-w-3xl rounded-2xl border border-white/10 bg-surface/80 p-6 md:p-10">
+              <span
+                aria-hidden="true"
+                className="select-none font-display text-6xl font-black leading-none text-neutral-800 opacity-60"
+              >
+                &ldquo;
+              </span>
+              <blockquote className="-mt-4 text-base leading-relaxed text-neutral-200 sm:text-lg">
+                {testimonial.quote}
               </blockquote>
-              <figcaption className="mt-6 text-sm text-muted">
-                <span className="text-foreground">{testimonial.name}</span> ·{" "}
-                {testimonial.role} · {testimonial.org}
+              <figcaption className="mt-6 flex flex-col gap-1 border-t border-white/5 pt-5">
+                <span className="font-display text-base font-extrabold tracking-tight text-white">
+                  {testimonial.name}
+                </span>
+                <span className="font-mono text-[11px] text-neutral-400">
+                  {testimonial.role} · {testimonial.org}
+                </span>
               </figcaption>
             </figure>
-          </section>
+          </Chapter>
         )}
 
         {/* CTA */}
-        <section className="mx-auto w-full max-w-5xl border-t px-6 py-16 sm:py-24">
-          <h2 className="max-w-2xl font-display text-3xl font-medium tracking-tight sm:text-4xl">
-            Need an internal tool that fits how your team{" "}
-            <span className="markline">actually works</span>?
-          </h2>
-          <p className="mt-4 max-w-xl leading-relaxed text-muted">
-            I build systems like this end to end — solo, start to finish. If you
-            have a manual process that's outgrown email and spreadsheets, I'd
-            like to hear about it.
-          </p>
-          <a
-            href="/#contact"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-ink transition-transform hover:-translate-y-0.5"
-          >
-            Start a conversation
-          </a>
-        </section>
+        <Reveal as="section" className="relative overflow-hidden border-t border-white/5">
+          <div
+            aria-hidden="true"
+            className="bg-dot-pattern pointer-events-none absolute inset-0 opacity-25"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-0 h-32 w-full max-w-[500px] -translate-x-1/2 bg-purple-500/10 blur-[100px]"
+          />
+
+          <div className="relative z-10 mx-auto w-full max-w-5xl px-6 py-20 sm:px-8 sm:py-28">
+            <h2 className="max-w-2xl font-display text-3xl font-black uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl">
+              Need an internal tool that fits how your team{" "}
+              <span className="markline">actually works</span>?
+            </h2>
+            <p className="mt-6 max-w-xl text-sm leading-relaxed text-neutral-400 sm:text-base">
+              I build systems like this end to end — solo, start to finish. If you
+              have a manual process that&apos;s outgrown email and spreadsheets,
+              I&apos;d like to hear about it.
+            </p>
+            <Link
+              href="/#contact"
+              className="group mt-10 inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-xs font-bold uppercase tracking-wider text-accent-ink shadow-md shadow-accent/20 transition-all duration-300 hover:scale-[1.03] hover:brightness-110 active:scale-[0.98]"
+            >
+              Start a conversation
+              <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+          </div>
+        </Reveal>
       </main>
 
       <Footer />

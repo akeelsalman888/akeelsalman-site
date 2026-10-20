@@ -110,8 +110,11 @@ body {
 
 /* ---------------------------------------------------------------------------
    Ambient background. Layers are rendered in the markup by Ambience.js so they
-   exist without JavaScript; the parallax offsets below are the only part JS
-   drives, by writing --dx/--dy (and --sx/--sy for the cursor spotlight).
+   exist without JavaScript. JS-driven motion is layered on top of that static
+   base: PointerEffects.js writes --gdx/--gdy (pools) and --gx/--gy/--gs (cursor
+   wash) as custom properties, and separately redraws .amb-grid-canvas directly
+   every frame — a mesh it can bend near the pointer, which a custom property
+   can't express.
 
    Uses soft radial-gradients rather than `filter: blur()` — blurring elements
    this large is expensive to composite on every pointer move.
@@ -147,26 +150,17 @@ body {
 }
 
 /*
-  The grid. It drifts with the mouse, and the amount it has drifted is published
-  as --dx/--dy so PointerEffects.js can offset the node cluster by exactly the
-  same amount and keep the dots on the lines.
-
-  The negative inset is load-bearing, not a rough guess. The layer has to be
-  oversized or the pull drags an empty edge into view — but the overhang must be a
-  WHOLE multiple of the cell size, because the background tiles start at the
-  element's own origin. Expressed as `--grid * -3` the lines still fall on exact
-  multiples of the cell size in viewport coordinates, which is what makes the
-  snapping arithmetic valid. An arbitrary overhang like -8% would put them at an
-  unpredictable offset and the dots would sit beside the lines, not on them.
-
-  Three cells rather than one so the pull can be big enough to actually notice —
-  DRIFT.grid in PointerEffects.js must stay under this overhang.
+  The grid. This flat CSS tiling is only what renders before JS decides whether
+  to enhance it — once PointerEffects.js confirms a fine pointer and no motion
+  preference against it, .amb-warp goes on the container, this fades out, and
+  .amb-grid-canvas (below) takes over with a version that actually bends near
+  the cursor. So this copy never moves; it just needs to look right sitting
+  still, which is also exactly what a no-JS visit gets forever.
 */
 .amb-grid {
   position: absolute;
   inset: calc(var(--grid, 44px) * -3);
-  will-change: translate, opacity;
-  translate: var(--dx, 0px) var(--dy, 0px);
+  will-change: opacity;
   /* Fainter lines than the larger cells carried: at this density the same alpha
      reads as a busy mesh rather than a quiet lattice. */
   background-image:
@@ -187,6 +181,31 @@ body {
   50% {
     opacity: 1;
   }
+}
+
+/*
+  The enhanced grid. PointerEffects.js redraws this every frame as a mesh of
+  nodes at --grid spacing and pulls the ones near the pointer toward it, with
+  the pull falling off to nothing a couple of hundred px out — so the lattice
+  reads as a sheet being pressed at one point, not a block sliding around.
+  Same mask as .amb-grid so the two hand off invisibly.
+*/
+.amb-grid-canvas {
+  position: absolute;
+  inset: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  mask-image: radial-gradient(115% 95% at 50% 40%, #000 45%, transparent 100%);
+  animation: amb-grid-breathe 11s ease-in-out infinite;
+}
+
+.amb-warp .amb-grid {
+  display: none;
+}
+
+.amb-warp .amb-grid-canvas {
+  display: block;
 }
 
 /*
@@ -542,7 +561,8 @@ html[data-intro="done"] .intro-overlay {
   }
   /* The grid stops breathing and settles at full strength; the static glow stays,
      so the page keeps its depth without anything in motion. */
-  .amb-grid {
+  .amb-grid,
+  .amb-grid-canvas {
     animation: none;
     opacity: 0.85;
   }

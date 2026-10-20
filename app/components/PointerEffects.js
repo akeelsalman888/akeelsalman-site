@@ -6,21 +6,26 @@ import { useEffect } from "react";
 const MAX_DEG = 9;
 
 /*
-  How far each background layer moves, in px, at full pointer deflection.
-
-  The grid's figure is POSITIVE, so it travels the same way as the pointer — the
-  lattice is pulled toward the cursor. The light pools are negative, so they hang
-  back the other way; that opposition is what reads as depth instead of the whole
+  How far the light pools move, in px, at full pointer deflection. Negative, so
+  they hang back opposite the pointer while the grid mesh (below) is pulled
+  toward it — that opposition is what reads as depth instead of the whole
   background sliding as one sheet.
-
-  `grid` must stay under the CSS overhang (three cells, 132px at a 44px grid) or
-  the pull would drag an empty edge into view.
 */
-const DRIFT = { grid: 72, glow: -44 };
+const DRIFT = { glow: -44 };
 
 // Easing applied per frame toward the pointer. Lower = more lag on the pull.
 const EASE_DRIFT = 0.12;
 const EASE_GLOW = 0.2;
+
+/*
+  The grid mesh push. Nodes within GRID_RADIUS px of the pointer are pulled
+  toward it, falling off to nothing at the edge — GRID_STRENGTH is the pull at
+  distance 0. EASE_WARP fades the whole effect in/out with `live` so it doesn't
+  pop when the pointer enters or leaves.
+*/
+const GRID_RADIUS = 260;
+const GRID_STRENGTH = 46;
+const EASE_WARP = 0.12;
 
 /*
   Pointer speed → how much the warm wash swells, published as --gs.
@@ -58,9 +63,36 @@ export default function PointerEffects() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!finePointer.matches || reduced.matches) return;
 
+    const ambEl = document.querySelector(".amb");
     const glow = document.querySelector(".amb-cursor-glow");
-    const gridEl = document.querySelector(".amb-grid");
+    const canvas = document.querySelector(".amb-grid-canvas");
+    const gridCtx = canvas?.getContext("2d");
     const pools = document.querySelector(".amb-glow");
+
+    // Shared with the CSS grid's cell size so the mesh this draws lines up with
+    // it exactly during the fade handoff between the two.
+    const GRID =
+      parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--grid")
+      ) || 44;
+
+    let canvasW = 0;
+    let canvasH = 0;
+
+    const resizeCanvas = () => {
+      if (!canvas || !gridCtx) return;
+      const dpr = window.devicePixelRatio || 1;
+      canvasW = window.innerWidth;
+      canvasH = window.innerHeight;
+      canvas.width = canvasW * dpr;
+      canvas.height = canvasH * dpr;
+      canvas.style.width = `${canvasW}px`;
+      canvas.style.height = `${canvasH}px`;
+      gridCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    resizeCanvas();
+    ambEl?.classList.add("amb-warp");
 
     let pointerX = -1000;
     let pointerY = -1000;
@@ -71,6 +103,7 @@ export default function PointerEffects() {
     let lastX = -1000; // pointer position at the previous frame, for speed
     let lastY = -1000;
     let speed = 0; // eased, normalised 0…1
+    let warpAmt = 0; // eased 0…1, how much the grid mesh is currently pulled
     let live = false;
     let frame = 0;
     let tilted = null;
@@ -132,20 +165,76 @@ export default function PointerEffects() {
       tilted = null;
     };
 
+    /*
+      Redraws the grid as a mesh of nodes at GRID spacing, pulling each one
+      toward (px, py) by an amount that falls off to 0 at GRID_RADIUS — a
+      quadratic falloff so the pull is felt as a smooth dent rather than a hard
+      edge. Drawn as full mesh lines (not just displaced dots) so the lattice
+      visibly bends instead of just breaking apart near the cursor.
+
+      amt eases the whole effect in/out with `live`, independent of the falloff
+      above — this is what fades the push in when the pointer arrives instead of
+      snapping straight to full strength.
+    */
+    const drawWarpedGrid = (ctx, w, h, px, py, amt) => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.058)";
+      ctx.lineWidth = 1;
+
+      const cols = Math.ceil(w / GRID) + 4;
+      const rows = Math.ceil(h / GRID) + 4;
+      const startX = -2 * GRID;
+      const startY = -2 * GRID;
+
+      const warp = (x, y) => {
+        const dx = x - px;
+        const dy = y - py;
+        const dist = Math.hypot(dx, dy);
+        if (dist >= GRID_RADIUS || dist < 0.01) return [x, y];
+        const pull = GRID_STRENGTH * amt * (1 - dist / GRID_RADIUS) ** 2;
+        return [x - (dx / dist) * pull, y - (dy / dist) * pull];
+      };
+
+      ctx.beginPath();
+      for (let r = 0; r <= rows; r++) {
+        const y = startY + r * GRID;
+        for (let c = 0; c <= cols; c++) {
+          const [wx, wy] = warp(startX + c * GRID, y);
+          if (c === 0) ctx.moveTo(wx, wy);
+          else ctx.lineTo(wx, wy);
+        }
+      }
+      for (let c = 0; c <= cols; c++) {
+        const x = startX + c * GRID;
+        for (let r = 0; r <= rows; r++) {
+          const [wx, wy] = warp(x, startY + r * GRID);
+          if (r === 0) ctx.moveTo(wx, wy);
+          else ctx.lineTo(wx, wy);
+        }
+      }
+      ctx.stroke();
+    };
+
     const render = () => {
-      // --- background drift ------------------------------------------------
+      // --- background drift -------------------------------------------------
       const nx = (pointerX / window.innerWidth) * 2 - 1;
       const ny = (pointerY / window.innerHeight) * 2 - 1;
       driftX += (nx - driftX) * EASE_DRIFT;
       driftY += (ny - driftY) * EASE_DRIFT;
 
-      if (gridEl) {
-        gridEl.style.setProperty("--dx", `${(driftX * DRIFT.grid).toFixed(2)}px`);
-        gridEl.style.setProperty("--dy", `${(driftY * DRIFT.grid).toFixed(2)}px`);
-      }
       if (pools) {
         pools.style.setProperty("--gdx", `${(driftX * DRIFT.glow).toFixed(2)}px`);
         pools.style.setProperty("--gdy", `${(driftY * DRIFT.glow).toFixed(2)}px`);
+      }
+
+      // --- grid mesh push -----------------------------------------------------
+      warpAmt += ((live ? 1 : 0) - warpAmt) * EASE_WARP;
+      if (gridCtx) {
+        if (warpAmt > 0.001) {
+          drawWarpedGrid(gridCtx, canvasW, canvasH, pointerX, pointerY, warpAmt);
+        } else {
+          gridCtx.clearRect(0, 0, canvasW, canvasH);
+        }
       }
 
       // --- pointer speed ---------------------------------------------------
@@ -176,15 +265,18 @@ export default function PointerEffects() {
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("blur", onLeave);
+    window.addEventListener("resize", resizeCanvas);
     document.addEventListener("pointerleave", onLeave);
     frame = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(frame);
       releaseTilt(tilted);
+      ambEl?.classList.remove("amb-warp");
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("blur", onLeave);
+      window.removeEventListener("resize", resizeCanvas);
       document.removeEventListener("pointerleave", onLeave);
     };
   }, []);

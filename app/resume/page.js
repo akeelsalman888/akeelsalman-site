@@ -98,16 +98,29 @@ export default function ResumePage() {
               <div className="mt-4 flex flex-col gap-6">
                 <div>
                   <h3 className="font-display text-lg font-extrabold tracking-tight text-white print:text-black">
-                    Freelance Web Developer
+                    Volunteer Full-Stack Developer
                   </h3>
                   <p className="font-mono text-[11px] uppercase tracking-wider text-neutral-500 print:text-neutral-600">
-                    Remote · Independent
+                    Iman Islamic Center · Lincoln, NE · Jan 2026 – Present
                   </p>
-                  <p className="mt-2 text-sm leading-relaxed text-neutral-400 print:text-neutral-800">
-                    Design, build, and ship full-stack web applications and
-                    automation for organizations — end to end, solo. Selected
-                    projects below.
-                  </p>
+                  <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm leading-relaxed text-neutral-400 print:text-neutral-800">
+                    <li>
+                      Designed, built, and launched the center&apos;s bilingual
+                      (English/Arabic, RTL) website, solo, for 300+ families —
+                      online donations, events, and class sign-ups.
+                    </li>
+                    <li>
+                      Built an internal board portal with Google SSO that
+                      replaced paper-and-email purchase approvals and
+                      reimbursements with an approval workflow and
+                      auto-generated PDF records.
+                    </li>
+                    <li>
+                      Added automated Playwright tests and visual-regression
+                      checks so every page is verified across languages and
+                      screen sizes before each release.
+                    </li>
+                  </ul>
                 </div>
                 <div>
                   <h3 className="font-display text-lg font-extrabold tracking-tight text-white print:text-black">

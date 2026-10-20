@@ -62,7 +62,9 @@ function Preview({ project }) {
             <span className="font-display text-2xl font-black tracking-tight text-neutral-700 transition-colors duration-500 group-hover/card:text-neutral-500 md:text-3xl">
               {project.name}
             </span>
-            <span className="eyebrow text-neutral-700">Visit live site</span>
+            <span className="eyebrow text-neutral-700">
+              {project.caseStudyUrl ? "Read the case study" : "Visit live site"}
+            </span>
           </div>
         )}
       </div>

@@ -40,10 +40,9 @@ export const projects = [
     description:
       "A bilingual (English/Arabic, full RTL) website serving an Islamic community center of 300+ families — with prayer times, events, online donations, and service applications. Built solo with React and a serverless backend, with an automated test suite that checks every page across languages and screen sizes before each release.",
     tech: ["React", "Vite", "Google Apps Script", "Playwright", "i18n/RTL"],
-    // No screenshot captured yet — the card falls back to a labelled browser
-    // frame showing the live domain. Drop a file in /public/work/ and set this
-    // to its path to show a real preview instead.
-    image: null,
+    caseStudyUrl: "/work/iman-islam",
+    image: "/work/iman-islam/homepage-en.png",
+    imageAlt: "The Iman Islamic Center home page in English",
   },
   {
     name: "Iman Connect",
@@ -76,7 +75,7 @@ export const skills = [
   },
   {
     group: "Tooling & Practices",
-    items: ["Git", "Playwright", "CI / Visual Regression", "Google SSO", "Responsive Design"],
+    items: ["Git", "Playwright", "CI / Visual Regression", "Google SSO", "Responsive Design", "AI-assisted development (Claude Code)"],
   },
 ];
 
